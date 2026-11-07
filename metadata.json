@@ -1,0 +1,6 @@
+{
+  "name": "Respawn",
+  "description": "Quit video game addiction tracker with real-time sobriety counter, milestone achievement badges, reclaimed time metrics, and craving support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
