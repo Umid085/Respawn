@@ -104,7 +104,10 @@ fun DailyJournalFeedCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.weight(1f, fill = false),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Box(
                         modifier = Modifier
                             .size(38.dp)
@@ -125,7 +128,7 @@ fun DailyJournalFeedCard(
 
                     Column {
                         Text(
-                            text = "SOBRIETY JOURNAL & TRIGGERS",
+                            text = "SOBRIETY JOURNAL",
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = CyanClarity,
@@ -135,23 +138,29 @@ fun DailyJournalFeedCard(
                             text = "Daily Emotional Log",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary
+                            color = TextPrimary,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.width(8.dp))
 
                 Button(
                     onClick = onNewJournalEntryClick,
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = CyanClarity),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                     modifier = Modifier.testTag("new_journal_entry_btn")
                 ) {
                     Text(
                         text = "Write Entry",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
-                        color = SlateCard
+                        color = SlateCard,
+                        maxLines = 1,
+                        softWrap = false
                     )
                 }
             }

@@ -158,7 +158,9 @@ fun StreakHeroCard(
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         color = EmeraldClean,
-                        letterSpacing = 1.sp
+                        letterSpacing = 1.sp,
+                        maxLines = 1,
+                        softWrap = false
                     )
                 }
             }
@@ -260,7 +262,10 @@ fun StreakHeroCard(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            modifier = Modifier.weight(1f, fill = false),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Icon(
                                 imageVector = Icons.Default.EmojiEvents,
                                 contentDescription = "Next badge",
@@ -272,13 +277,18 @@ fun StreakHeroCard(
                                 text = "Next: ${nextBadge.title}",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = TextPrimary,
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = FontWeight.SemiBold,
+                                maxLines = 1,
+                                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                             )
                         }
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = String.format("%.1f days left", nextBadgeRemainingDays),
+                            text = String.format(java.util.Locale.US, "%.1f days left", nextBadgeRemainingDays),
                             style = MaterialTheme.typography.labelSmall,
-                            color = AmberGold
+                            color = AmberGold,
+                            maxLines = 1,
+                            softWrap = false
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))

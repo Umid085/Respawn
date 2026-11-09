@@ -87,7 +87,10 @@ fun QuestsScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.weight(1f, fill = false),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Box(
                         modifier = Modifier
                             .size(40.dp)
@@ -114,10 +117,14 @@ fun QuestsScreen(
                         Text(
                             text = "Gamify your real habits, not pixels",
                             style = MaterialTheme.typography.labelSmall,
-                            color = TextSecondary
+                            color = TextSecondary,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.width(8.dp))
 
                 Button(
                     onClick = { showAddQuestDialog = true },
@@ -136,7 +143,9 @@ fun QuestsScreen(
                         text = "New Quest",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
-                        color = SlateDark
+                        color = SlateDark,
+                        maxLines = 1,
+                        softWrap = false
                     )
                 }
             }

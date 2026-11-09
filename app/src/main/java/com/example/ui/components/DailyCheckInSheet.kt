@@ -10,12 +10,15 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -27,6 +30,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -63,7 +67,7 @@ import com.example.ui.theme.TextMuted
 import com.example.ui.theme.TextPrimary
 import com.example.ui.theme.TextSecondary
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DailyCheckInSheet(
     streakDays: Long,
@@ -126,8 +130,8 @@ fun DailyCheckInSheet(
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth(0.94f)
-                .padding(vertical = 20.dp)
+                .fillMaxWidth(0.95f)
+                .fillMaxHeight(0.90f)
                 .testTag("daily_journal_dialog"),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(containerColor = SlateCard),
@@ -135,18 +139,19 @@ fun DailyCheckInSheet(
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .padding(20.dp)
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Header
+                // Header (Pinned)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = Modifier.weight(1f, fill = false),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Box(
                             modifier = Modifier
                                 .size(36.dp)
@@ -190,9 +195,17 @@ fun DailyCheckInSheet(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(14.dp))
 
-                // 1. HOW DO YOU FEEL TODAY?
+                // Scrollable Questions Body
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // 1. HOW DO YOU FEEL TODAY?
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -365,7 +378,16 @@ fun DailyCheckInSheet(
                             thumbColor = FlameOrange,
                             activeTrackColor = FlameOrange,
                             inactiveTrackColor = SlateBorder
-                        )
+                        ),
+                        thumb = {
+                            Box(
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clip(CircleShape)
+                                    .background(FlameOrange)
+                                    .border(2.dp, SlateCard, CircleShape)
+                            )
+                        }
                     )
                 }
 
@@ -458,36 +480,40 @@ fun DailyCheckInSheet(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(12.dp))
+            } // End of scrollable body Column
 
-                Button(
-                    onClick = {
-                        onSubmit(
-                            selectedFeeling.first,
-                            selectedFeeling.second,
-                            selectedTriggers.toList(),
-                            urgeLevel,
-                            moodLevel,
-                            selectedActivities.toList(),
-                            notes
-                        )
-                        onDismiss()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .testTag("submit_journal_entry_button"),
-                    shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldClean)
-                ) {
-                    Text(
-                        text = "Save Journal Entry (+60 XP)",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = SlateCard
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Pinned Save Button
+            Button(
+                onClick = {
+                    onSubmit(
+                        selectedFeeling.first,
+                        selectedFeeling.second,
+                        selectedTriggers.toList(),
+                        urgeLevel,
+                        moodLevel,
+                        selectedActivities.toList(),
+                        notes
                     )
-                }
+                    onDismiss()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .testTag("submit_journal_entry_button"),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = EmeraldClean)
+            ) {
+                Text(
+                    text = "Save Journal Entry (+60 XP)",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = SlateCard
+                )
             }
         }
     }
+}
 }

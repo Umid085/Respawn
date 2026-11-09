@@ -139,7 +139,10 @@ fun GamingFreeTrendChart(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.weight(1f, fill = false),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Box(
                         modifier = Modifier
                             .size(36.dp)
@@ -167,13 +170,17 @@ fun GamingFreeTrendChart(
                             letterSpacing = 1.sp
                         )
                         Text(
-                            text = "Gaming-Free Days Trend Line",
+                            text = "Gaming-Free Days",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary
+                            color = TextPrimary,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.width(8.dp))
 
                 Row(
                     modifier = Modifier
@@ -193,7 +200,9 @@ fun GamingFreeTrendChart(
                         text = "100% DISCIPLINE",
                         style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
                         fontWeight = FontWeight.Bold,
-                        color = EmeraldClean
+                        color = EmeraldClean,
+                        maxLines = 1,
+                        softWrap = false
                     )
                 }
             }
@@ -217,7 +226,7 @@ fun GamingFreeTrendChart(
                         color = TextMuted
                     )
                     Text(
-                        text = String.format("%.1f Days Clean", selectedPoint.daysCleanAtDate),
+                        text = String.format(java.util.Locale.US, "%.1f Days Clean", selectedPoint.daysCleanAtDate),
                         style = MaterialTheme.typography.titleMedium.copy(fontFamily = JetBrainsMono),
                         fontWeight = FontWeight.Bold,
                         color = if (selectedPoint.isClean) EmeraldClean else TextMuted

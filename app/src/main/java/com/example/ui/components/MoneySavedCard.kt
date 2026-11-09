@@ -98,7 +98,10 @@ fun MoneySavedCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.weight(1f, fill = false),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Box(
                         modifier = Modifier
                             .size(38.dp)
@@ -130,13 +133,17 @@ fun MoneySavedCard(
                             letterSpacing = 1.sp
                         )
                         Text(
-                            text = "Zero Games & Subscriptions",
+                            text = "Zero Games & Subs",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary
+                            color = TextPrimary,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.width(8.dp))
 
                 // Edit daily expenditure button
                 Row(
@@ -157,10 +164,12 @@ fun MoneySavedCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = String.format("$%.2f/day", dailyExpenditureSetting),
+                        text = String.format(java.util.Locale.US, "$%.2f/day", dailyExpenditureSetting),
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = AmberGold
+                        color = AmberGold,
+                        maxLines = 1,
+                        softWrap = false
                     )
                 }
             }
@@ -175,7 +184,7 @@ fun MoneySavedCard(
             ) {
                 Column {
                     Text(
-                        text = String.format("$%.2f", moneySaved),
+                        text = String.format(java.util.Locale.US, "$%.2f", moneySaved),
                         style = MaterialTheme.typography.displayMedium.copy(
                             fontFamily = JetBrainsMono,
                             fontWeight = FontWeight.ExtraBold,
@@ -217,7 +226,7 @@ fun MoneySavedCard(
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
                         Text(
-                            text = String.format("%.1f Games", gamesAvoided),
+                            text = String.format(java.util.Locale.US, "%.1f Games", gamesAvoided),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -248,7 +257,7 @@ fun MoneySavedCard(
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
                         Text(
-                            text = String.format("%.1f Months", subscriptionsAvoided),
+                            text = String.format(java.util.Locale.US, "%.1f Months", subscriptionsAvoided),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -350,7 +359,7 @@ fun EditDailyExpenditureDialog(
                             color = TextMuted
                         )
                         Text(
-                            text = String.format("$%.2f / day", spendValue),
+                            text = String.format(java.util.Locale.US, "$%.2f / day", spendValue),
                             style = MaterialTheme.typography.headlineMedium.copy(fontFamily = JetBrainsMono),
                             fontWeight = FontWeight.Bold,
                             color = EmeraldClean
@@ -363,7 +372,7 @@ fun EditDailyExpenditureDialog(
                             color = TextMuted
                         )
                         Text(
-                            text = String.format("$%.0f / month", spendValue * 30f),
+                            text = String.format(java.util.Locale.US, "$%.0f / month", spendValue * 30f),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = AmberGold
@@ -420,7 +429,7 @@ fun EditDailyExpenditureDialog(
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                         )
                         Text(
-                            text = String.format("$%.2f", value),
+                            text = String.format(java.util.Locale.US, "$%.2f", value),
                             style = MaterialTheme.typography.labelSmall,
                             color = EmeraldClean
                         )

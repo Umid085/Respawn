@@ -485,27 +485,32 @@ private fun FeaturedBadgeMini(
                 if (isUnlocked) AmberGold.copy(alpha = 0.5f) else SlateBorder.copy(alpha = 0.3f),
                 RoundedCornerShape(12.dp)
             )
-            .padding(vertical = 10.dp, horizontal = 6.dp),
+            .padding(vertical = 8.dp, horizontal = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
             imageVector = Icons.Default.EmojiEvents,
             contentDescription = badge.title,
             tint = if (isUnlocked) AmberGold else TextMuted,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(22.dp)
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = badge.title,
-            style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+            style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp, lineHeight = 12.sp),
             color = if (isUnlocked) TextPrimary else TextMuted,
-            maxLines = 1,
+            maxLines = 2,
+            minLines = 2,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
             fontWeight = if (isUnlocked) FontWeight.Bold else FontWeight.Normal
         )
+        Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = if (isUnlocked) "EARNED" else "${badge.requiredThreshold.toInt()}d",
             style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
-            color = if (isUnlocked) EmeraldClean else TextMuted
+            color = if (isUnlocked) EmeraldClean else TextMuted,
+            fontWeight = FontWeight.Bold
         )
     }
 }
