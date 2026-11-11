@@ -74,19 +74,25 @@ import kotlinx.coroutines.delay
 fun UrgeSurfingDialog(
     whyStatement: String,
     onDismiss: () -> Unit,
-    onLogSuccess: (trigger: String, intensity: Int, strategy: String, note: String) -> Unit
+    onLogSuccess: (trigger: String, intensity: Int, strategy: String, note: String) -> Unit,
+    strings: com.example.ui.i18n.StringsDefinition = com.example.ui.i18n.AppStrings.Russian
 ) {
-    var selectedTrigger by remember { mutableStateOf("Boredom") }
-    var selectedStrategy by remember { mutableStateOf("Box Breathing") }
+    val isRu = strings == com.example.ui.i18n.AppStrings.Russian
+
+    var selectedTrigger by remember { mutableStateOf(if (isRu) "Скука" else "Boredom") }
+    var selectedStrategy by remember { mutableStateOf(if (isRu) "Квадратное дыхание" else "Box Breathing") }
     var intensity by remember { mutableIntStateOf(7) }
     var note by remember { mutableStateOf("") }
 
     // Breathing guide state
-    var breathPhase by remember { mutableStateOf("Inhale") }
+    var breathPhase by remember { mutableStateOf(if (isRu) "Вдох" else "Inhale") }
     var breathSeconds by remember { mutableIntStateOf(4) }
 
-    LaunchedEffect(Unit) {
-        val phases = listOf("Inhale (4s)", "Hold (4s)", "Exhale (4s)", "Hold (4s)")
+    LaunchedEffect(isRu) {
+        val phases = if (isRu)
+            listOf("Вдох (4с)", "Задержка (4с)", "Выдох (4с)", "Задержка (4с)")
+        else
+            listOf("Inhale (4s)", "Hold (4s)", "Exhale (4s)", "Hold (4s)")
         var index = 0
         while (true) {
             breathPhase = phases[index % 4]
@@ -144,7 +150,7 @@ fun UrgeSurfingDialog(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "URGE SURFER SOS",
+                            text = strings.urgeSurfingTitle,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -204,7 +210,7 @@ fun UrgeSurfingDialog(
                         .padding(12.dp)
                 ) {
                     Text(
-                        text = "YOUR CORE REASON:",
+                        text = strings.whyStoppedTitle.uppercase(),
                         style = MaterialTheme.typography.labelSmall,
                         color = EmeraldClean,
                         fontWeight = FontWeight.Bold
@@ -223,13 +229,17 @@ fun UrgeSurfingDialog(
                 // Trigger Picker
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "What triggered this urge?",
+                        text = if (isRu) "Что вызвало эту тягу?" else "What triggered this urge?",
                         style = MaterialTheme.typography.labelLarge,
                         color = TextSecondary
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    val triggers = listOf("Boredom", "Stress", "Fatigue", "Gaming Ad / Friends", "Loneliness", "Anger")
+                    val triggers = if (isRu)
+                        listOf("Скука", "Стресс", "Усталость", "Реклама/Друзья", "Одиночество", "Злость")
+                    else
+                        listOf("Boredom", "Stress", "Fatigue", "Gaming Ad / Friends", "Loneliness", "Anger")
+
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -269,7 +279,7 @@ fun UrgeSurfingDialog(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Intensity Level",
+                            text = if (isRu) "Интенсивность тяги" else "Intensity Level",
                             style = MaterialTheme.typography.labelLarge,
                             color = TextSecondary
                         )
@@ -298,12 +308,16 @@ fun UrgeSurfingDialog(
                 // Coping Action Used
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "How did you interrupt it?",
+                        text = if (isRu) "Как вы преодолели позыв?" else "How did you interrupt it?",
                         style = MaterialTheme.typography.labelLarge,
                         color = TextSecondary
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    val strategies = listOf("Box Breathing", "Cold Water Splash", "10-Min Walk", "Pushups", "Called Friend")
+                    val strategies = if (isRu)
+                        listOf("Квадратное дыхание", "Холодная вода", "Прогулка 10 мин", "Отжимания", "Звонок другу")
+                    else
+                        listOf("Box Breathing", "Cold Water Splash", "10-Min Walk", "Pushups", "Called Friend")
+
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -339,8 +353,8 @@ fun UrgeSurfingDialog(
                 OutlinedTextField(
                     value = note,
                     onValueChange = { note = it },
-                    label = { Text("Reflection Note (optional)") },
-                    placeholder = { Text("What did you learn from surfing this wave?") },
+                    label = { Text(if (isRu) "Заметка / Инсайт (необязательно)" else "Reflection Note (optional)") },
+                    placeholder = { Text(if (isRu) "Чему вас научило преодоление этой волны тяги?" else "What did you learn from surfing this wave?") },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -367,7 +381,7 @@ fun UrgeSurfingDialog(
                     colors = ButtonDefaults.buttonColors(containerColor = EmeraldClean)
                 ) {
                     Text(
-                        text = "I Conquered This Urge (+75 XP)",
+                        text = strings.surfedSuccessButton,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = SlateCard

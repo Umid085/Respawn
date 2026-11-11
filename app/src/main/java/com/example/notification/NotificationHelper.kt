@@ -87,6 +87,16 @@ object NotificationHelper {
         prefs.edit().putBoolean(KEY_ACCOMPLISHMENTS_ENABLED, enabled).apply()
     }
 
+    private fun isRussian(context: Context): Boolean {
+        val prefs = context.getSharedPreferences("respawn_settings", Context.MODE_PRIVATE)
+        val code = prefs.getString("app_language", "ru") ?: "ru"
+        return if (code == "system") {
+            java.util.Locale.getDefault().language.lowercase().let { it == "ru" || it == "be" || it == "uk" || it == "kk" }
+        } else {
+            code == "ru"
+        }
+    }
+
     fun showDailyCheckInNotification(context: Context, dayCount: Long = 1) {
         if (!isDailyCheckInEnabled(context)) return
 
@@ -108,8 +118,9 @@ object NotificationHelper {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val title = "⚔️ Day $dayCount Check-In Ready"
-        val message = "Take 60 seconds to log how you feel and identify today's triggers to protect your sobriety."
+        val isRu = isRussian(context)
+        val title = if (isRu) "⚔️ Дневник трезвости: День $dayCount" else "⚔️ Day $dayCount Check-In Ready"
+        val message = if (isRu) "Уделите минуту, чтобы зафиксировать состояние, победить тягу и укрепить трезвость." else "Take 60 seconds to log how you feel and identify today's triggers to protect your sobriety."
 
         val notification = NotificationCompat.Builder(context, CHANNEL_DAILY_CHECKIN)
             .setSmallIcon(R.mipmap.ic_launcher)
@@ -146,8 +157,9 @@ object NotificationHelper {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val title = "🏆 Accomplishment: $badgeTitle"
-        val message = "$badgeDescription You are taking back control of your real life!"
+        val isRu = isRussian(context)
+        val title = if (isRu) "🏆 Достижение: $badgeTitle" else "🏆 Accomplishment: $badgeTitle"
+        val message = if (isRu) "$badgeDescription Вы возвращаете контроль над своей реальной жизнью!" else "$badgeDescription You are taking back control of your real life!"
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ACCOMPLISHMENTS)
             .setSmallIcon(R.mipmap.ic_launcher)

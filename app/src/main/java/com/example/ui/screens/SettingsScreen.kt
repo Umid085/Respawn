@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.Schedule
@@ -86,8 +87,11 @@ fun SettingsScreen(
     onSendTestAccomplishment: () -> Unit = {},
     onCheckForUpdates: () -> Unit = {},
     onUpdateTargetGitHubRepo: (String) -> Unit = {},
+    onSetAppLanguage: (com.example.ui.i18n.AppLanguage) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val strings = uiState.strings
+
     var hoursPerDay by remember(uiState.profile.hoursPerDayGaming) {
         mutableFloatStateOf(uiState.profile.hoursPerDayGaming)
     }
@@ -134,16 +138,105 @@ fun SettingsScreen(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = "SETTINGS & PROFILE",
+                        text = strings.settingsTitle,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
                     Text(
-                        text = "Fine-tune calculations and quit date",
+                        text = strings.settingsSubtitle,
                         style = MaterialTheme.typography.labelSmall,
                         color = TextSecondary
                     )
+                }
+            }
+        }
+
+        // App Language Switcher Card
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("language_settings_card"),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = SlateCard),
+                border = androidx.compose.foundation.BorderStroke(1.dp, AmberGold.copy(alpha = 0.5f))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(AmberGold.copy(alpha = 0.15f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Language,
+                                contentDescription = "Language",
+                                tint = AmberGold,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = strings.languageSectionTitle,
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = AmberGold,
+                                letterSpacing = 1.sp
+                            )
+                            Text(
+                                text = strings.languageSectionDesc,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = TextPrimary
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        val currentLang = uiState.appLanguage
+                        val languages = listOf(
+                            com.example.ui.i18n.AppLanguage.RUSSIAN to "🇷🇺 Русский",
+                            com.example.ui.i18n.AppLanguage.ENGLISH to "🇺🇸 English",
+                            com.example.ui.i18n.AppLanguage.SYSTEM to "🌐 Авто"
+                        )
+                        languages.forEach { (lang, label) ->
+                            val isSelected = currentLang == lang
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(if (isSelected) AmberGold else SlateCardElevated)
+                                    .border(1.dp, if (isSelected) AmberGold else SlateBorder, RoundedCornerShape(12.dp))
+                                    .clickable { onSetAppLanguage(lang) }
+                                    .padding(vertical = 12.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = label,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isSelected) SlateDark else TextPrimary,
+                                    maxLines = 1
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -175,7 +268,7 @@ fun SettingsScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Quit Date & Time",
+                                text = strings.quitDateTitle,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
@@ -188,7 +281,7 @@ fun SettingsScreen(
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = AmberGold),
                             contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp, vertical = 4.dp)
                         ) {
-                            Text("Adjust Date", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Text(strings.adjustDateButton, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
 
@@ -207,7 +300,7 @@ fun SettingsScreen(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Your clean streak counter started counting continuously from this moment.",
+                        text = strings.quitDateDesc,
                         style = MaterialTheme.typography.bodySmall,
                         color = TextMuted
                     )
@@ -229,13 +322,13 @@ fun SettingsScreen(
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "Gaming Habit Calibration",
+                        text = strings.habitCalibrationTitle,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
                     Text(
-                        text = "Used to compute hours reclaimed and money saved",
+                        text = strings.habitCalibrationDesc,
                         style = MaterialTheme.typography.bodySmall,
                         color = TextMuted
                     )
@@ -248,12 +341,12 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Daily Gaming Average",
+                            text = strings.dailyHoursLabel,
                             style = MaterialTheme.typography.bodyMedium,
                             color = TextSecondary
                         )
                         Text(
-                            text = String.format("%.1f hrs / day", hoursPerDay),
+                            text = String.format(Locale.US, "%.1f hrs / day", hoursPerDay),
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold,
                             color = FlameOrange
@@ -284,26 +377,26 @@ fun SettingsScreen(
                     ) {
                         Column {
                             Text(
-                                text = "Daily Gaming Expenditure",
+                                text = strings.dailySpendLabel,
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 color = TextPrimary
                             )
                             Text(
-                                text = "Games & subscriptions avoided",
+                                text = strings.dailySpendSub,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextMuted
                             )
                         }
                         Column(horizontalAlignment = Alignment.End) {
                             Text(
-                                text = String.format("$%.2f / day", dailySpend),
+                                text = String.format(Locale.US, "$%.2f / day", dailySpend),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = EmeraldClean
                             )
                             Text(
-                                text = String.format("~ $%.0f/mo", dailySpend * 30f),
+                                text = String.format(Locale.US, "~ $%.0f/mo", dailySpend * 30f),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = TextSecondary
                             )
@@ -333,7 +426,7 @@ fun SettingsScreen(
                             genre = it
                             onUpdateProfile(hoursPerDay, dailySpend, monthlySpend, uiState.profile.whyStatement, genre)
                         },
-                        label = { Text("Addictive Game Genres") },
+                        label = { Text(strings.gameGenresLabel) },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -383,14 +476,14 @@ fun SettingsScreen(
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
                             Text(
-                                text = "NOTIFICATIONS & REMINDERS",
+                                text = strings.notificationsSectionTitle,
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = EmeraldClean,
                                 letterSpacing = 1.sp
                             )
                             Text(
-                                text = "Daily Check-Ins & Accomplishments",
+                                text = strings.checkInNotifTitle,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
@@ -412,14 +505,14 @@ fun SettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Daily Check-In Reminder (8:00 PM)",
+                                text = strings.checkInNotifTitle,
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Evening prompt to log emotional state, cravings, and identify triggers.",
+                                text = strings.checkInNotifDesc,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextMuted,
                                 lineHeight = 14.sp
@@ -453,14 +546,14 @@ fun SettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Milestones & Accomplishments",
+                                text = strings.milestonesNotifTitle,
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Celebration alerts when unlocking 7-day, 30-day, or 100-day clean streak badges.",
+                                text = strings.milestonesNotifDesc,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextMuted,
                                 lineHeight = 14.sp
@@ -493,7 +586,7 @@ fun SettingsScreen(
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = EmeraldClean)
                         ) {
-                            Text("Test Check-In", fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                            Text(strings.testCheckInButton, fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                         }
 
                         OutlinedButton(
@@ -502,7 +595,7 @@ fun SettingsScreen(
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = AmberGold)
                         ) {
-                            Text("Test Trophy", fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                            Text(strings.testTrophyButton, fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                         }
                     }
                 }
@@ -547,14 +640,14 @@ fun SettingsScreen(
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
                             Text(
-                                text = "APP UPDATES & AUTO-RENEWAL",
+                                text = strings.appUpdatesTitle,
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = AmberGold,
                                 letterSpacing = 1.sp
                             )
                             Text(
-                                text = "In-App Version Checker",
+                                text = strings.installedVersionLabel,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
@@ -575,7 +668,7 @@ fun SettingsScreen(
                     ) {
                         Column {
                             Text(
-                                text = "Installed Version",
+                                text = strings.installedVersionLabel,
                                 style = MaterialTheme.typography.labelSmall,
                                 color = TextMuted
                             )
@@ -600,9 +693,9 @@ fun SettingsScreen(
                                     color = SlateDark
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Checking...", color = SlateDark, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                Text(if (uiState.appLanguage == com.example.ui.i18n.AppLanguage.RUSSIAN) "Проверка..." else "Checking...", color = SlateDark, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                             } else {
-                                Text("Check for Updates", color = SlateDark, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                Text(strings.checkForUpdatesButton, color = SlateDark, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -628,7 +721,7 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "GitHub Release Repository:",
+                        text = strings.targetRepoLabel,
                         style = MaterialTheme.typography.labelSmall,
                         color = TextMuted
                     )
@@ -653,7 +746,10 @@ fun SettingsScreen(
 
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "When you publish a new APK release on GitHub, the app detects it automatically and prompts you to update in one tap.",
+                        text = if (uiState.appLanguage == com.example.ui.i18n.AppLanguage.RUSSIAN)
+                            "Когда вы публикуете новый релиз APK на GitHub, приложение автоматически обнаруживает его и предлагает обновиться в один клик."
+                        else
+                            "When you publish a new APK release on GitHub, the app detects it automatically and prompts you to update in one tap.",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextMuted,
                         fontSize = 11.sp,
@@ -690,7 +786,7 @@ fun SettingsScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Streak Reset",
+                                text = strings.streakResetTitle,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = CyberCrimson
@@ -703,14 +799,14 @@ fun SettingsScreen(
                             colors = ButtonDefaults.buttonColors(containerColor = CyberCrimson.copy(alpha = 0.2f)),
                             contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp, vertical = 4.dp)
                         ) {
-                            Text("Reset Counter", color = CyberCrimson, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Text(strings.resetCounterButton, color = CyberCrimson, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "If you slipped up, do not despair. Relapse is not the end of your journey—it is data on where your boundary broke. Resetting restarts your streak from 0 while keeping your XP and previous trophies intact.",
+                        text = strings.streakResetDesc,
                         style = MaterialTheme.typography.bodySmall,
                         color = TextMuted,
                         lineHeight = 16.sp
@@ -741,7 +837,7 @@ fun SettingsScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Respawn Philosophy",
+                            text = strings.philosophyTitle,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -749,7 +845,7 @@ fun SettingsScreen(
                     }
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "Respawn is engineered based on dopamine fasting and cognitive behavioral habit disruption. Games hijack your evolutionary achievement drive. By turning your discipline and reclaimed hours into tangible real-world leveling, you win in reality.",
+                        text = strings.philosophyDesc,
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary,
                         lineHeight = 18.sp

@@ -36,11 +36,17 @@ class TrackerViewModel(application: Application) : AndroidViewModel(application)
         val dailyEnabled = NotificationHelper.isDailyCheckInEnabled(application)
         val accomEnabled = NotificationHelper.isAccomplishmentsEnabled(application)
         val repo = AppUpdateManager.getTargetRepository(application)
+        val prefs = application.getSharedPreferences("respawn_settings", Context.MODE_PRIVATE)
+        val savedLangCode = prefs.getString("app_language", "ru") ?: "ru"
+        val initialLang = com.example.ui.i18n.AppLanguage.values().firstOrNull { it.code == savedLangCode }
+            ?: com.example.ui.i18n.AppLanguage.RUSSIAN
+
         _uiState.update {
             it.copy(
                 dailyCheckInNotificationEnabled = dailyEnabled,
                 accomplishmentsNotificationEnabled = accomEnabled,
-                targetGitHubRepo = repo
+                targetGitHubRepo = repo,
+                appLanguage = initialLang
             )
         }
         if (dailyEnabled) {
@@ -57,7 +63,7 @@ class TrackerViewModel(application: Application) : AndroidViewModel(application)
             repository.userProfile.collect { profile ->
                 val currentProfile = profile ?: UserProfile()
                 _uiState.update { current ->
-                    val (sobriety, stage, nextBadge, remainingDays) = calculateMetrics(currentProfile, current.allBadges)
+                    val (sobriety, stage, nextBadge, remainingDays) = calculateMetrics(currentProfile, current.allBadges, current.appLanguage)
                     current.copy(
                         isLoading = false,
                         profile = currentProfile,
@@ -73,7 +79,7 @@ class TrackerViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             repository.allBadges.collect { badges ->
                 _uiState.update { current ->
-                    val (sobriety, stage, nextBadge, remainingDays) = calculateMetrics(current.profile, badges)
+                    val (sobriety, stage, nextBadge, remainingDays) = calculateMetrics(current.profile, badges, current.appLanguage)
                     current.copy(
                         allBadges = badges,
                         nextBadge = nextBadge,
@@ -132,7 +138,8 @@ class TrackerViewModel(application: Application) : AndroidViewModel(application)
                 val currentProfile = _uiState.value.profile
                 val badges = _uiState.value.allBadges
                 if (!_uiState.value.isLoading) {
-                    val (sobriety, stage, nextBadge, remainingDays) = calculateMetrics(currentProfile, badges)
+                    val lang = _uiState.value.appLanguage
+                    val (sobriety, stage, nextBadge, remainingDays) = calculateMetrics(currentProfile, badges, lang)
                     _uiState.update {
                         it.copy(
                             sobrietyTime = sobriety,
@@ -152,7 +159,8 @@ class TrackerViewModel(application: Application) : AndroidViewModel(application)
 
     private fun calculateMetrics(
         profile: UserProfile,
-        badges: List<Badge>
+        badges: List<Badge>,
+        language: com.example.ui.i18n.AppLanguage
     ): Quadruple<SobrietyTime, DopamineStage, Badge?, Float> {
         val now = System.currentTimeMillis()
         val elapsedMillis = (now - profile.quitTimestamp).coerceAtLeast(0L)
@@ -189,7 +197,7 @@ class TrackerViewModel(application: Application) : AndroidViewModel(application)
             workoutsEquivalent = workoutsEquivalent
         )
 
-        val stage = calculateDopamineStage(days.toInt())
+        val stage = calculateDopamineStage(days.toInt(), language)
 
         // Find next locked streak badge
         val lockedStreakBadges = badges
@@ -204,55 +212,58 @@ class TrackerViewModel(application: Application) : AndroidViewModel(application)
         return Quadruple(sobriety, stage, nextBadge, remainingDays)
     }
 
-    private fun calculateDopamineStage(days: Int): DopamineStage {
+    private fun calculateDopamineStage(days: Int, language: com.example.ui.i18n.AppLanguage): DopamineStage {
+        val isRu = language == com.example.ui.i18n.AppLanguage.RUSSIAN || 
+            (language == com.example.ui.i18n.AppLanguage.SYSTEM && java.util.Locale.getDefault().language.lowercase().let { it == "ru" || it == "be" || it == "uk" || it == "kk" })
+
         return when {
             days < 3 -> DopamineStage(
                 stageNumber = 1,
-                title = "The Detox Shock",
-                dayRange = "Days 1–3",
-                status = "Acute Phase",
+                title = if (isRu) "Острая ломка" else "The Detox Shock",
+                dayRange = if (isRu) "Дни 1–3" else "Days 1–3",
+                status = if (isRu) "Острая фаза" else "Acute Phase",
                 progress = (days / 3f).coerceIn(0.1f, 1f),
-                neurobiologyNote = "Peak restlessness & phantom urges. Dopamine receptors notice the sudden drop in hyperstimulation. Stay hydrated and breathe."
+                neurobiologyNote = if (isRu) "Пик беспокойства и тяги. Дофаминовые рецепторы фиксируют резкий спад сверхстимуляции. Пейте воду, дышите и держитесь." else "Peak restlessness & phantom urges. Dopamine receptors notice the sudden drop in hyperstimulation. Stay hydrated and breathe."
             )
             days < 7 -> DopamineStage(
                 stageNumber = 2,
-                title = "Dopamine Shift",
-                dayRange = "Days 4–7",
-                status = "Stabilizing",
+                title = if (isRu) "Дофаминовый сдвиг" else "Dopamine Shift",
+                dayRange = if (isRu) "Дни 4–7" else "Days 4–7",
+                status = if (isRu) "Стабилизация" else "Stabilizing",
                 progress = ((days - 3) / 4f).coerceIn(0.1f, 1f),
-                neurobiologyNote = "REM sleep rebounds and morning brain fog starts clearing. Physical fidgeting subsides into grounded energy."
+                neurobiologyNote = if (isRu) "Фаза быстрого сна (REM) восстанавливается, туман в голове рассеивается. Физическая суета сменяется спокойной энергией." else "REM sleep rebounds and morning brain fog starts clearing. Physical fidgeting subsides into grounded energy."
             )
             days < 21 -> DopamineStage(
                 stageNumber = 3,
-                title = "Neuroplastic Rewiring",
-                dayRange = "Days 8–21",
-                status = "Rebuilding",
+                title = if (isRu) "Нейропластическое обновление" else "Neuroplastic Rewiring",
+                dayRange = if (isRu) "Дни 8–21" else "Days 8–21",
+                status = if (isRu) "Восстановление" else "Rebuilding",
                 progress = ((days - 7) / 14f).coerceIn(0.1f, 1f),
-                neurobiologyNote = "Prefrontal cortex strengthens executive control. Subtle daily pleasures like walking and reading begin to feel rewarding."
+                neurobiologyNote = if (isRu) "Префронтальная кора укрепляет самоконтроль. Простые ежедневные радости (прогулки, чтение) начинают приносить удовольствие." else "Prefrontal cortex strengthens executive control. Subtle daily pleasures like walking and reading begin to feel rewarding."
             )
             days < 60 -> DopamineStage(
                 stageNumber = 4,
-                title = "Natural Sensitization",
-                dayRange = "Days 22–60",
-                status = "Flourishing",
+                title = if (isRu) "Естественная чувствительность" else "Natural Sensitization",
+                dayRange = if (isRu) "Дни 22–60" else "Days 22–60",
+                status = if (isRu) "Расцвет" else "Flourishing",
                 progress = ((days - 21) / 39f).coerceIn(0.1f, 1f),
-                neurobiologyNote = "D2 receptor density recovers significantly. Deep focus, patience, and genuine motivation for real-world projects return."
+                neurobiologyNote = if (isRu) "Плотность рецепторов D2 восстанавливается. Возвращается глубокая концентрация, терпение и искренний интерес к реальным проектам." else "D2 receptor density recovers significantly. Deep focus, patience, and genuine motivation for real-world projects return."
             )
             days < 100 -> DopamineStage(
                 stageNumber = 5,
-                title = "Cognitive Mastery",
-                dayRange = "Days 61–100",
-                status = "Mastery",
+                title = if (isRu) "Когнитивное мастерство" else "Cognitive Mastery",
+                dayRange = if (isRu) "Дни 61–100" else "Days 61–100",
+                status = if (isRu) "Мастерство" else "Mastery",
                 progress = ((days - 60) / 40f).coerceIn(0.1f, 1f),
-                neurobiologyNote = "Urges are now rare and easily dismissed. Emotional resilience and real-life satisfaction reach peak levels."
+                neurobiologyNote = if (isRu) "Тяга к играм становится редкой и легко преодолимой. Эмоциональная стойкость и удовлетворение жизнью достигают пика." else "Urges are now rare and easily dismissed. Emotional resilience and real-life satisfaction reach peak levels."
             )
             else -> DopamineStage(
                 stageNumber = 6,
-                title = "Total Sovereign Rebirth",
-                dayRange = "100+ Days",
-                status = "Transcended",
+                title = if (isRu) "Полное перерождение" else "Total Sovereign Rebirth",
+                dayRange = if (isRu) "100+ Дней" else "100+ Days",
+                status = if (isRu) "Свобода" else "Transcended",
                 progress = 1.0f,
-                neurobiologyNote = "Complete brain homeostasis. You no longer view video games as an escape; your real life is your playground."
+                neurobiologyNote = if (isRu) "Полный гомеостаз мозга. Вы больше не ищете спасения в пикселях — реальный мир стал вашей главной ареной побед." else "Complete brain homeostasis. You no longer view video games as an escape; your real life is your playground."
             )
         }
     }
@@ -432,6 +443,21 @@ class TrackerViewModel(application: Application) : AndroidViewModel(application)
     fun setTargetGitHubRepo(repo: String) {
         AppUpdateManager.setTargetRepository(getApplication(), repo)
         _uiState.update { it.copy(targetGitHubRepo = repo) }
+    }
+
+    fun setAppLanguage(lang: com.example.ui.i18n.AppLanguage) {
+        val prefs = getApplication<Application>().getSharedPreferences("respawn_settings", Context.MODE_PRIVATE)
+        prefs.edit().putString("app_language", lang.code).apply()
+        _uiState.update { current ->
+            val (sobriety, stage, nextBadge, remainingDays) = calculateMetrics(current.profile, current.allBadges, lang)
+            current.copy(
+                appLanguage = lang,
+                currentDopamineStage = stage,
+                sobrietyTime = sobriety,
+                nextBadge = nextBadge,
+                nextBadgeDaysRemaining = remainingDays
+            )
+        }
     }
 }
 

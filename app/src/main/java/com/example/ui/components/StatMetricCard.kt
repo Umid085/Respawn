@@ -48,6 +48,7 @@ import com.example.ui.viewmodel.SobrietyTime
 @Composable
 fun ReclaimedMetricsGrid(
     sobrietyTime: SobrietyTime,
+    strings: com.example.ui.i18n.StringsDefinition = com.example.ui.i18n.AppStrings.Russian,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -59,9 +60,9 @@ fun ReclaimedMetricsGrid(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             MetricTile(
-                title = "Time Reclaimed",
-                value = String.format("%.1f hrs", sobrietyTime.hoursReclaimed),
-                subtext = "Saved from screens",
+                title = strings.hoursReclaimedTitle,
+                value = String.format(java.util.Locale.US, "%.1f hrs", sobrietyTime.hoursReclaimed),
+                subtext = strings.hoursReclaimedSubtitle,
                 icon = Icons.Default.Schedule,
                 accentColor = FlameOrange,
                 modifier = Modifier
@@ -70,9 +71,9 @@ fun ReclaimedMetricsGrid(
             )
 
             MetricTile(
-                title = "Money Saved",
-                value = String.format("$%.2f", sobrietyTime.moneySaved),
-                subtext = String.format("@ $%.2f/day spend setting", sobrietyTime.dailyGamingSpend),
+                title = strings.moneySavedTitle,
+                value = String.format(java.util.Locale.US, "$%.2f", sobrietyTime.moneySaved),
+                subtext = String.format(java.util.Locale.US, "@ $%.2f/day", sobrietyTime.dailyGamingSpend),
                 icon = Icons.Default.AttachMoney,
                 accentColor = EmeraldClean,
                 modifier = Modifier
@@ -86,18 +87,18 @@ fun ReclaimedMetricsGrid(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             MetricTile(
-                title = "Books Equivalent",
-                value = String.format("%.1f books", sobrietyTime.booksEquivalent),
-                subtext = "@ 6 hrs / book reading",
+                title = strings.booksLabel,
+                value = String.format(java.util.Locale.US, "%.1f", sobrietyTime.booksEquivalent),
+                subtext = strings.booksSub,
                 icon = Icons.Default.MenuBook,
                 accentColor = CyanClarity,
                 modifier = Modifier.weight(1f)
             )
 
             MetricTile(
-                title = "Gym Sessions",
-                value = "${sobrietyTime.workoutsEquivalent} sessions",
-                subtext = "@ 1 hr / full workout",
+                title = strings.workoutsLabel,
+                value = "${sobrietyTime.workoutsEquivalent}",
+                subtext = strings.workoutsSub,
                 icon = Icons.Default.FitnessCenter,
                 accentColor = AmberGold,
                 modifier = Modifier.weight(1f)

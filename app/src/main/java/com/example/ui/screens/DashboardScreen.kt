@@ -72,6 +72,8 @@ fun DashboardScreen(
     onUpdateDailyExpenditure: (Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val strings = uiState.strings
+    val isRu = strings.isRussian
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -108,14 +110,14 @@ fun DashboardScreen(
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {
                         Text(
-                            text = "RESPAWN",
+                            text = uiState.strings.appTitle,
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.ExtraBold,
                             color = TextPrimary,
                             letterSpacing = 1.sp
                         )
                         Text(
-                            text = "Game-Free Sovereignty",
+                            text = uiState.strings.appSubtitle,
                             style = MaterialTheme.typography.labelSmall,
                             color = AmberGold
                         )
@@ -149,7 +151,8 @@ fun DashboardScreen(
                 currentLevel = uiState.profile.level,
                 currentXp = uiState.profile.totalXp,
                 onUrgeSurfClick = onUrgeSurfClick,
-                onCheckInClick = onCheckInClick
+                onCheckInClick = onCheckInClick,
+                strings = uiState.strings
             )
         }
 
@@ -160,7 +163,8 @@ fun DashboardScreen(
                 dailyExpenditureSetting = uiState.profile.dailyGamingSpendDollars,
                 gamesAvoided = uiState.sobrietyTime.gamesAvoidedEquivalent,
                 subscriptionsAvoided = uiState.sobrietyTime.subscriptionsAvoidedEquivalent,
-                onUpdateDailyExpenditure = onUpdateDailyExpenditure
+                onUpdateDailyExpenditure = onUpdateDailyExpenditure,
+                strings = uiState.strings
             )
         }
 
@@ -168,14 +172,17 @@ fun DashboardScreen(
         item {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "RECLAIMED LIFE STATISTICS",
+                    text = uiState.strings.hoursReclaimedTitle,
                     style = MaterialTheme.typography.labelSmall,
                     color = TextMuted,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-                ReclaimedMetricsGrid(sobrietyTime = uiState.sobrietyTime)
+                ReclaimedMetricsGrid(
+                    sobrietyTime = uiState.sobrietyTime,
+                    strings = uiState.strings
+                )
             }
         }
 
@@ -217,7 +224,7 @@ fun DashboardScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Milestone Badges",
+                                text = uiState.strings.featuredBadgesTitle,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
@@ -226,7 +233,7 @@ fun DashboardScreen(
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "${uiState.unlockedBadges.size} / ${uiState.allBadges.size} Unlocked",
+                                text = "${uiState.unlockedBadges.size} / ${uiState.allBadges.size} ${uiState.strings.totalBadgesUnlocked}",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = AmberGold
                             )
@@ -292,15 +299,22 @@ fun DashboardScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Daily Sobriety Journal",
+                                text = uiState.strings.checkInModalTitle,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
                             )
                         }
 
+                        val isRu = uiState.appLanguage == com.example.ui.i18n.AppLanguage.RUSSIAN ||
+                            (uiState.appLanguage == com.example.ui.i18n.AppLanguage.SYSTEM && java.util.Locale.getDefault().language.lowercase().let { it == "ru" || it == "be" || it == "uk" || it == "kk" })
+
                         Text(
-                            text = if (latestCheckIn != null) "Logged Today ✓" else "Log Day ${uiState.sobrietyTime.days}",
+                            text = if (latestCheckIn != null) {
+                                if (isRu) "Записано сегодня ✓" else "Logged Today ✓"
+                            } else {
+                                if (isRu) "Записать день ${uiState.sobrietyTime.days}" else "Log Day ${uiState.sobrietyTime.days}"
+                            },
                             style = MaterialTheme.typography.labelSmall,
                             color = if (latestCheckIn != null) EmeraldClean else AmberGold,
                             fontWeight = FontWeight.Bold
@@ -322,14 +336,14 @@ fun DashboardScreen(
                             Spacer(modifier = Modifier.width(10.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Feeling: ${latestCheckIn.feeling}",
+                                    text = "${if (isRu) "Самочувствие" else "Feeling"}: ${latestCheckIn.feeling}",
                                     style = MaterialTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = TextPrimary
                                 )
                                 if (latestCheckIn.identifiedTriggers.isNotBlank()) {
                                     Text(
-                                        text = "Triggers: ${latestCheckIn.identifiedTriggers}",
+                                        text = "${if (isRu) "Триггеры" else "Triggers"}: ${latestCheckIn.identifiedTriggers}",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = TextSecondary,
                                         maxLines = 1
@@ -347,7 +361,10 @@ fun DashboardScreen(
                         }
                     } else {
                         Text(
-                            text = "Take 60 seconds to log how you feel and identify today's triggers to protect your sobriety.",
+                            text = if (isRu)
+                                "Уделите 60 секунд, чтобы записать эмоции и выявить сегодняшние триггеры для защиты своей трезвости."
+                            else
+                                "Take 60 seconds to log how you feel and identify today's triggers to protect your sobriety.",
                             style = MaterialTheme.typography.bodySmall,
                             color = TextSecondary
                         )
@@ -383,7 +400,7 @@ fun DashboardScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Today's Real-Life Quests",
+                                text = uiState.strings.quickQuestsTitle,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
@@ -395,7 +412,7 @@ fun DashboardScreen(
                             modifier = Modifier.clickable { onNavigateToQuests() }
                         ) {
                             Text(
-                                text = "All Quests",
+                                text = uiState.strings.viewAllButton,
                                 style = MaterialTheme.typography.labelSmall,
                                 color = EmeraldClean
                             )
@@ -446,7 +463,7 @@ fun DashboardScreen(
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {
                         Text(
-                            text = "MY VISION FOR REAL LIFE",
+                            text = uiState.strings.recoveryManifestoTitle,
                             style = MaterialTheme.typography.labelSmall,
                             color = AmberGold,
                             fontWeight = FontWeight.Bold,

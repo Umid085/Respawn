@@ -1,0 +1,496 @@
+package com.example.ui.i18n
+
+import java.util.Locale
+
+enum class AppLanguage(val code: String, val title: String, val nativeName: String) {
+    SYSTEM("system", "System Default", "По умолчанию"),
+    RUSSIAN("ru", "Russian", "Русский"),
+    ENGLISH("en", "English", "English")
+}
+
+data class StringsDefinition(
+    val isRussian: Boolean = false,
+    // Bottom Nav
+    val navDashboard: String,
+    val navBadges: String,
+    val navQuests: String,
+    val navAnalytics: String,
+
+    // Top Bar & Hero
+    val appTitle: String,
+    val appSubtitle: String,
+    val daysFree: String,
+    val nextBadgePrefix: String,
+    val daysLeftSuffix: String,
+    val cravingSosButton: String,
+    val dailyCheckInButton: String,
+    val levelPrefix: String,
+    val xpLabel: String,
+
+    // Money Saved Card
+    val moneySavedTitle: String,
+    val moneySavedSubtitle: String,
+    val moneySavedDesc: String,
+    val gamesEquivalentLabel: String,
+    val gamesRateLabel: String,
+    val monthsEquivalentLabel: String,
+    val monthsRateLabel: String,
+
+    // Reclaimed Metrics
+    val hoursReclaimedTitle: String,
+    val hoursReclaimedSubtitle: String,
+    val workdaysLabel: String,
+    val workdaysSub: String,
+    val booksLabel: String,
+    val booksSub: String,
+    val workoutsLabel: String,
+    val workoutsSub: String,
+
+    // Dopamine Stage Card
+    val dopamineRebootTitle: String,
+    val activePhaseLabel: String,
+    val stageLabel: String,
+
+    // Recovery Manifesto
+    val recoveryManifestoTitle: String,
+    val editWhyButton: String,
+    val defaultWhyStatement: String,
+
+    // Featured Sections
+    val featuredBadgesTitle: String,
+    val viewAllButton: String,
+    val quickQuestsTitle: String,
+    val unlockedBadgeDialogTitle: String,
+    val claimTrophyButton: String,
+
+    // Daily Check-In Modal
+    val checkInModalTitle: String,
+    val checkInDayNumberPrefix: String,
+    val howFeelingQuestion: String,
+    val feelingsMap: Map<String, String>,
+    val triggersQuestion: String,
+    val triggersMap: Map<String, String>,
+    val cravingIntensityLabel: String,
+    val overallMoodLabel: String,
+    val productiveActivitiesQuestion: String,
+    val activitiesMap: Map<String, String>,
+    val journalNotesLabel: String,
+    val journalNotesPlaceholder: String,
+    val saveJournalButton: String,
+
+    // Urge Surfing Modal
+    val urgeSurfingTitle: String,
+    val whyStoppedTitle: String,
+    val urgeWaveExplanation: String,
+    val boxBreathingTitle: String,
+    val boxBreathingDesc: String,
+    val breathInhale: String,
+    val breathHold: String,
+    val breathExhale: String,
+    val surfedSuccessButton: String,
+    val triggerIdentifiedLabel: String,
+
+    // Badges Screen
+    val badgesScreenTitle: String,
+    val badgesScreenSubtitle: String,
+    val totalBadgesUnlocked: String,
+    val tabStreak: String,
+    val tabHours: String,
+    val tabUrges: String,
+    val tabRewards: String,
+    val requiredLabel: String,
+    val neuroBenefitLabel: String,
+    val personalRewardsTitle: String,
+    val addCustomRewardButton: String,
+
+    // Quests Screen
+    val questsScreenTitle: String,
+    val questsScreenSubtitle: String,
+    val playerLevelLabel: String,
+    val completedQuestsLabel: String,
+    val addCustomQuestButton: String,
+    val completeButton: String,
+    val doneBadge: String,
+
+    // Analytics Screen
+    val analyticsTitle: String,
+    val analyticsSubtitle: String,
+    val trendChartTitle: String,
+    val trendChartSubtitle: String,
+    val disciplineBadge: String,
+    val gamingFreeBadge: String,
+    val daysCleanFormat: String,
+    val correlationTitle: String,
+    val correlationSubtitle: String,
+    val moodCurveLabel: String,
+    val urgeCurveLabel: String,
+    val journalFeedTitle: String,
+    val writeEntryButton: String,
+    val noEntriesYet: String,
+
+    // Settings Screen
+    val settingsTitle: String,
+    val settingsSubtitle: String,
+    val languageSectionTitle: String,
+    val languageSectionDesc: String,
+    val quitDateTitle: String,
+    val adjustDateButton: String,
+    val quitDateDesc: String,
+    val habitCalibrationTitle: String,
+    val habitCalibrationDesc: String,
+    val dailyHoursLabel: String,
+    val dailySpendLabel: String,
+    val dailySpendSub: String,
+    val gameGenresLabel: String,
+    val notificationsSectionTitle: String,
+    val checkInNotifTitle: String,
+    val checkInNotifDesc: String,
+    val milestonesNotifTitle: String,
+    val milestonesNotifDesc: String,
+    val testCheckInButton: String,
+    val testTrophyButton: String,
+    val appUpdatesTitle: String,
+    val installedVersionLabel: String,
+    val checkForUpdatesButton: String,
+    val targetRepoLabel: String,
+    val streakResetTitle: String,
+    val resetCounterButton: String,
+    val streakResetDesc: String,
+    val philosophyTitle: String,
+    val philosophyDesc: String
+)
+
+object AppStrings {
+
+    val English = StringsDefinition(
+        navDashboard = "Dashboard",
+        navBadges = "Badges",
+        navQuests = "Quests",
+        navAnalytics = "Analytics",
+
+        appTitle = "RESPAWN",
+        appSubtitle = "Game-Free Sovereignty",
+        daysFree = "DAYS FREE",
+        nextBadgePrefix = "Next: ",
+        daysLeftSuffix = "days left",
+        cravingSosButton = "Craving SOS",
+        dailyCheckInButton = "Daily Check-In",
+        levelPrefix = "LVL",
+        xpLabel = "XP",
+
+        moneySavedTitle = "MONEY SAVED",
+        moneySavedSubtitle = "Zero Games & Subscriptions",
+        moneySavedDesc = "Kept in your bank account, not spent on pixels",
+        gamesEquivalentLabel = "Games",
+        gamesRateLabel = "@ $70 / release",
+        monthsEquivalentLabel = "Months",
+        monthsRateLabel = "@ $15 / sub",
+
+        hoursReclaimedTitle = "HOURS RECLAIMED",
+        hoursReclaimedSubtitle = "True mortal life given back to you",
+        workdaysLabel = "Workdays",
+        workdaysSub = "8h shifts",
+        booksLabel = "Books",
+        booksSub = "250 pages",
+        workoutsLabel = "Workouts",
+        workoutsSub = "Gym sessions",
+
+        dopamineRebootTitle = "DOPAMINE REBOOT PROGRESS",
+        activePhaseLabel = "Active Phase",
+        stageLabel = "Stage",
+
+        recoveryManifestoTitle = "Daily Recovery Manifesto",
+        editWhyButton = "Edit Why",
+        defaultWhyStatement = "I quit gaming because virtual achievements stole my real ambition, ruined my physical health, and made me a passive spectator of my own life. I reclaim my reality.",
+
+        featuredBadgesTitle = "Featured Milestones",
+        viewAllButton = "View All",
+        quickQuestsTitle = "Real-Life Leveling",
+        unlockedBadgeDialogTitle = "MILESTONE UNLOCKED!",
+        claimTrophyButton = "Claim Trophy & Continue",
+
+        checkInModalTitle = "DAILY CHECK-IN & JOURNAL",
+        checkInDayNumberPrefix = "Day %d of Gaming Sovereignty",
+        howFeelingQuestion = "How are you feeling right now?",
+        feelingsMap = mapOf(
+            "Balanced" to "Balanced",
+            "Resilient" to "Resilient",
+            "Tired" to "Tired",
+            "Restless" to "Restless",
+            "Craving" to "Craving Games"
+        ),
+        triggersQuestion = "Any gaming urges or emotional triggers today?",
+        triggersMap = mapOf(
+            "Boredom" to "Boredom",
+            "Stress" to "Stress",
+            "Loneliness" to "Loneliness",
+            "Social Media" to "Social Media",
+            "Tiredness" to "Tiredness",
+            "Gaming News" to "Gaming News"
+        ),
+        cravingIntensityLabel = "Craving Urge Intensity: %d/5",
+        overallMoodLabel = "Overall Daily Mood: %d/5",
+        productiveActivitiesQuestion = "Real-world activities completed today",
+        activitiesMap = mapOf(
+            "Workout" to "Workout",
+            "Read Book" to "Read Book",
+            "Work / Study" to "Work / Study",
+            "Outdoor Walk" to "Walk Outdoors",
+            "Cleaned Room" to "Cleaned Room",
+            "Meditation" to "Meditation"
+        ),
+        journalNotesLabel = "Journal Reflections & Lessons",
+        journalNotesPlaceholder = "What challenges did you face today? What victory are you proud of?",
+        saveJournalButton = "Save Journal Entry (+60 XP)",
+
+        urgeSurfingTitle = "URGE SURFING EMERGENCY",
+        whyStoppedTitle = "Remember Why You Stopped",
+        urgeWaveExplanation = "A craving is a neurological wave: it rises, peaks for 10-15 minutes, and naturally recedes. You do not have to obey it.",
+        boxBreathingTitle = "Box Breathing Protocol (4-4-4-4)",
+        boxBreathingDesc = "Slow deep breathing triggers your vagus nerve and shuts down impulsive craving signals in the amygdala.",
+        breathInhale = "Inhale",
+        breathHold = "Hold",
+        breathExhale = "Exhale",
+        surfedSuccessButton = "I Surfed the Craving (+100 XP)",
+        triggerIdentifiedLabel = "Identified Craving Trigger",
+
+        badgesScreenTitle = "TROPHIES & MILESTONES",
+        badgesScreenSubtitle = "Hard neurobiological proof of your transformation",
+        totalBadgesUnlocked = "Unlocked",
+        tabStreak = "Streak Days",
+        tabHours = "Hours Saved",
+        tabUrges = "Urge Surfs",
+        tabRewards = "Real Rewards",
+        requiredLabel = "Requirement",
+        neuroBenefitLabel = "Neuroscience Benefit",
+        personalRewardsTitle = "Real-Life Milestone Celebrations",
+        addCustomRewardButton = "+ Add Reward",
+
+        questsScreenTitle = "DAILY QUESTS & XP",
+        questsScreenSubtitle = "Turn your discipline into real-world character progression",
+        playerLevelLabel = "Level",
+        completedQuestsLabel = "Quests Completed",
+        addCustomQuestButton = "+ Add Quest",
+        completeButton = "Complete (+%d XP)",
+        doneBadge = "Done ✓",
+
+        analyticsTitle = "LIFE RECLAMATION ANALYTICS",
+        analyticsSubtitle = "Real mathematical proof of your transformation",
+        trendChartTitle = "30-DAY PROGRESSION TREND",
+        trendChartSubtitle = "Gaming-Free Days Trend Line",
+        disciplineBadge = "100% DISCIPLINE",
+        gamingFreeBadge = "Gaming Free ✓",
+        daysCleanFormat = "%.1f Days Clean",
+        correlationTitle = "MOOD VS CRAVING INTENSITY",
+        correlationSubtitle = "Notice how cravings drop as mood stabilizes",
+        moodCurveLabel = "Mood (1–5)",
+        urgeCurveLabel = "Craving (1–5)",
+        journalFeedTitle = "DAILY JOURNAL FEED",
+        writeEntryButton = "Write Entry",
+        noEntriesYet = "No check-ins logged yet. Tap Write Entry to record your first daily reflection!",
+
+        settingsTitle = "SETTINGS & PROFILE",
+        settingsSubtitle = "Fine-tune calculations and preferences",
+        languageSectionTitle = "LANGUAGE / ЯЗЫК",
+        languageSectionDesc = "Switch interface language between English and Russian",
+        quitDateTitle = "Quit Date & Time",
+        adjustDateButton = "Adjust Date",
+        quitDateDesc = "Your clean streak counter started counting continuously from this moment.",
+        habitCalibrationTitle = "Gaming Habit Calibration",
+        habitCalibrationDesc = "Used to compute hours reclaimed and money saved",
+        dailyHoursLabel = "Daily Gaming Average",
+        dailySpendLabel = "Daily Gaming Expenditure",
+        dailySpendSub = "Games & subscriptions avoided",
+        gameGenresLabel = "Addictive Game Genres",
+        notificationsSectionTitle = "NOTIFICATIONS & REMINDERS",
+        checkInNotifTitle = "Daily Check-In Reminder (8:00 PM)",
+        checkInNotifDesc = "Evening prompt to log emotional state, cravings, and identify triggers.",
+        milestonesNotifTitle = "Milestones & Accomplishments",
+        milestonesNotifDesc = "Celebration alerts when unlocking 7-day, 30-day, or 100-day clean streak badges.",
+        testCheckInButton = "Test Check-In",
+        testTrophyButton = "Test Trophy",
+        appUpdatesTitle = "APP UPDATES & AUTO-RENEWAL",
+        installedVersionLabel = "Installed Version",
+        checkForUpdatesButton = "Check for Updates",
+        targetRepoLabel = "GitHub Release Repository:",
+        streakResetTitle = "Streak Reset",
+        resetCounterButton = "Reset Counter",
+        streakResetDesc = "If you slipped up, do not despair. Relapse is data on where your boundary broke. Resetting restarts your streak from 0 while keeping your XP and previous trophies intact.",
+        philosophyTitle = "Respawn Philosophy",
+        philosophyDesc = "Respawn is engineered based on dopamine fasting and cognitive behavioral habit disruption. Games hijack your evolutionary achievement drive. By turning your discipline and reclaimed hours into tangible real-world leveling, you win in reality."
+    )
+
+    val Russian = StringsDefinition(
+        isRussian = true,
+        navDashboard = "Главная",
+        navBadges = "Награды",
+        navQuests = "Квесты",
+        navAnalytics = "Аналитика",
+
+        appTitle = "RESPAWN",
+        appSubtitle = "Свобода от игровой зависимости",
+        daysFree = "ДНЕЙ БЕЗ ИГР",
+        nextBadgePrefix = "След: ",
+        daysLeftSuffix = "дн. осталось",
+        cravingSosButton = "Тяга SOS",
+        dailyCheckInButton = "Дневник дня",
+        levelPrefix = "УР",
+        xpLabel = "XP",
+
+        moneySavedTitle = "СЭКОНОМЛЕНО ДЕНЕГ",
+        moneySavedSubtitle = "Ноль покупок игр и подписок",
+        moneySavedDesc = "Сохранено на банковском счете, а не спущено на пиксели",
+        gamesEquivalentLabel = "Игр",
+        gamesRateLabel = "@ $70 за релиз",
+        monthsEquivalentLabel = "Месяцев",
+        monthsRateLabel = "@ $15 в месяц",
+
+        hoursReclaimedTitle = "ВЕРНУТО ЧАСОВ",
+        hoursReclaimedSubtitle = "Настоящая земная жизнь, возвращенная вам",
+        workdaysLabel = "Раб. дней",
+        workdaysSub = "по 8 часов",
+        booksLabel = "Книг",
+        booksSub = "по 250 стр.",
+        workoutsLabel = "Тренировок",
+        workoutsSub = "в зале",
+
+        dopamineRebootTitle = "ПЕРЕЗАГРУЗКА ДОФАМИНА",
+        activePhaseLabel = "Текущая фаза",
+        stageLabel = "Этап",
+
+        recoveryManifestoTitle = "Ежедневный манифест трезвости",
+        editWhyButton = "Изменить",
+        defaultWhyStatement = "Я бросил видеоигры, потому что виртуальные достижения крали мои реальные амбиции, разрушали здоровье и делали меня пассивным зрителем собственной жизни. Я возвращаю себе реальность.",
+
+        featuredBadgesTitle = "Ключевые достижения",
+        viewAllButton = "Все награды",
+        quickQuestsTitle = "Прокачка в реальности",
+        unlockedBadgeDialogTitle = "ДОСТИЖЕНИЕ РАЗБЛОКИРОВАНО!",
+        claimTrophyButton = "Забрать трофей и продолжить",
+
+        checkInModalTitle = "ЕЖЕДНЕВНЫЙ ДНЕВНИК",
+        checkInDayNumberPrefix = "День %d свободы от игр",
+        howFeelingQuestion = "Как вы чувствуете себя прямо сейчас?",
+        feelingsMap = mapOf(
+            "Balanced" to "Спокойно",
+            "Resilient" to "Уверенно",
+            "Tired" to "Усталость",
+            "Restless" to "Беспокойство",
+            "Craving" to "Тяга к играм"
+        ),
+        triggersQuestion = "Были ли сегодня триггеры или позывы к играм?",
+        triggersMap = mapOf(
+            "Boredom" to "Скука",
+            "Stress" to "Стресс",
+            "Loneliness" to "Одиночество",
+            "Social Media" to "Соцсети",
+            "Tiredness" to "Усталость",
+            "Gaming News" to "Игровые новости"
+        ),
+        cravingIntensityLabel = "Интенсивность тяги к играм: %d/5",
+        overallMoodLabel = "Общее настроение за день: %d/5",
+        productiveActivitiesQuestion = "Полезные дела, выполненные сегодня",
+        activitiesMap = mapOf(
+            "Workout" to "Тренировка",
+            "Read Book" to "Чтение книги",
+            "Work / Study" to "Работа / Учеба",
+            "Outdoor Walk" to "Прогулка на улице",
+            "Cleaned Room" to "Уборка комнаты",
+            "Meditation" to "Медитация"
+        ),
+        journalNotesLabel = "Заметки, выводы и мысли",
+        journalNotesPlaceholder = "С какими трудностями вы столкнулись? Какой победой гордитесь сегодня?",
+        saveJournalButton = "Сохранить запись (+60 XP)",
+
+        urgeSurfingTitle = "СЕРФИНГ ТЯГИ: SOS",
+        whyStoppedTitle = "Вспомни, почему ты бросил",
+        urgeWaveExplanation = "Тяга к играм — это физиологическая волна: она нарастает, достигает пика за 10–15 минут и естественным образом спадает. Ты не обязан ей подчиняться.",
+        boxBreathingTitle = "Квадратное дыхание (4-4-4-4)",
+        boxBreathingDesc = "Медленное глубокое дыхание стимулирует блуждающий нерв, снижает пульс и гасит импульсивные сигналы в мозгу.",
+        breathInhale = "Вдох",
+        breathHold = "Задержка",
+        breathExhale = "Выдох",
+        surfedSuccessButton = "Я преодолел тягу (+100 XP)",
+        triggerIdentifiedLabel = "Обнаруженный триггер",
+
+        badgesScreenTitle = "ДОСТИЖЕНИЯ И ВЕХИ",
+        badgesScreenSubtitle = "Нейробиологические доказательства вашей трансформации",
+        totalBadgesUnlocked = "Открыто",
+        tabStreak = "Дни чистоты",
+        tabHours = "Часы жизни",
+        tabUrges = "Победы над тягой",
+        tabRewards = "Личные награды",
+        requiredLabel = "Условие",
+        neuroBenefitLabel = "Нейробиологическая польза",
+        personalRewardsTitle = "Награды за рубежи в реальном мире",
+        addCustomRewardButton = "+ Награда",
+
+        questsScreenTitle = "ЕЖЕДНЕВНЫЕ КВЕСТЫ",
+        questsScreenSubtitle = "Превратите дисциплину в реальную прокачку персонажа",
+        playerLevelLabel = "Уровень",
+        completedQuestsLabel = "Выполнено квестов",
+        addCustomQuestButton = "+ Квест",
+        completeButton = "Выполнить (+%d XP)",
+        doneBadge = "Готово ✓",
+
+        analyticsTitle = "АНАЛИТИКА ВОССТАНОВЛЕНИЯ",
+        analyticsSubtitle = "Точные математические доказательства вашей победы",
+        trendChartTitle = "ПРОГРЕСС ЗА 30 ДНЕЙ",
+        trendChartSubtitle = "График непрерывной трезвости",
+        disciplineBadge = "100% ДИСЦИПЛИНА",
+        gamingFreeBadge = "Без игр ✓",
+        daysCleanFormat = "%.1f дн. чистоты",
+        correlationTitle = "КОРРЕЛЯЦИЯ НАСТРОЕНИЯ И ТЯГИ",
+        correlationSubtitle = "Заметьте, как тяга падает по мере стабилизации настроения",
+        moodCurveLabel = "Настроение (1–5)",
+        urgeCurveLabel = "Тяга (1–5)",
+        journalFeedTitle = "ЖУРНАЛ ЕЖЕДНЕВНЫХ ЗАПИСЕЙ",
+        writeEntryButton = "Новая запись",
+        noEntriesYet = "Записей пока нет. Нажмите «Новая запись», чтобы записать первое размышление!",
+
+        settingsTitle = "НАСТРОЙКИ И ПРОФИЛЬ",
+        settingsSubtitle = "Управление параметрами и расчетными данными",
+        languageSectionTitle = "ЯЗЫК ИНТЕРФЕЙСА / LANGUAGE",
+        languageSectionDesc = "Переключение языка между русским и английским",
+        quitDateTitle = "Дата и время отказа от игр",
+        adjustDateButton = "Изменить дату",
+        quitDateDesc = "Счетчик непрерывной трезвости непрерывно считает дни с этого момента.",
+        habitCalibrationTitle = "Калибровка привычки",
+        habitCalibrationDesc = "Используется для точного подсчета сэкономленных часов и денег",
+        dailyHoursLabel = "Среднее время за играми в день",
+        dailySpendLabel = "Ежедневные расходы на игры",
+        dailySpendSub = "Игры, донаты и подписки",
+        gameGenresLabel = "Затягивающие игровые жанры",
+        notificationsSectionTitle = "УВЕДОМЛЕНИЯ И НАПОМИНАНИЯ",
+        checkInNotifTitle = "Вечерний дневник (20:00)",
+        checkInNotifDesc = "Напоминание каждый вечер в 20:00 записать эмоциональное состояние и успехи.",
+        milestonesNotifTitle = "Достижения и вехи",
+        milestonesNotifDesc = "Праздничные уведомления при достижении рубежей в 7, 30 или 100 дней.",
+        testCheckInButton = "Тест дневника",
+        testTrophyButton = "Тест трофея",
+        appUpdatesTitle = "ОБНОВЛЕНИЯ ПРИЛОЖЕНИЯ",
+        installedVersionLabel = "Установленная версия",
+        checkForUpdatesButton = "Проверить обновления",
+        targetRepoLabel = "Репозиторий релизов GitHub:",
+        streakResetTitle = "Сброс счетчика",
+        resetCounterButton = "Сбросить счетчик",
+        streakResetDesc = "Если произошел срыв, не опускайте руки. Срыв — это информация о том, где сломалась защита. Сброс начнет счетчик с нуля, сохранив ваш опыт (XP) и все заработанные трофеи.",
+        philosophyTitle = "Философия Respawn",
+        philosophyDesc = "Respawn создан на основе концепции дофаминового голодания и когнитивно-поведенческой коррекции привычек. Видеоигры эксплуатируют эволюционный механизм достижений. Превращая дисциплину и спасенные часы в прокачку в реальном мире, вы побеждаете в реальности."
+    )
+
+    fun get(language: AppLanguage): StringsDefinition {
+        return when (language) {
+            AppLanguage.RUSSIAN -> Russian
+            AppLanguage.ENGLISH -> English
+            AppLanguage.SYSTEM -> {
+                val sysLang = Locale.getDefault().language.lowercase()
+                if (sysLang == "ru" || sysLang == "be" || sysLang == "uk" || sysLang == "kk") {
+                    Russian
+                } else {
+                    English
+                }
+            }
+        }
+    }
+}

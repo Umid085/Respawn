@@ -1,0 +1,5 @@
+*.apk binary
+*.png binary
+*.jpg binary
+*.ttf binary
+*.keystore binary

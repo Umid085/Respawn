@@ -1,3 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Respawn</string>
+    <string name="channel_daily_checkin_name">Daily Recovery Check-In</string>
+    <string name="channel_daily_checkin_desc">Evening prompts to log emotional state and cravings</string>
+    <string name="channel_accomplishments_name">Milestones &amp; Accomplishments</string>
+    <string name="channel_accomplishments_desc">Celebration alerts for clean streak trophies and achievements</string>
 </resources>

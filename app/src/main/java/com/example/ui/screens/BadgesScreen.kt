@@ -79,7 +79,16 @@ fun BadgesScreen(
     var selectedTab by remember { mutableIntStateOf(0) }
     var showAddRewardDialog by remember { mutableStateOf(false) }
 
-    val tabs = listOf("All Badges", "Streak Milestones", "Hours Reclaimed", "Real-Life Rewards")
+    val strings = uiState.strings
+    val isRu = uiState.appLanguage == com.example.ui.i18n.AppLanguage.RUSSIAN ||
+        (uiState.appLanguage == com.example.ui.i18n.AppLanguage.SYSTEM && java.util.Locale.getDefault().language.lowercase().let { it == "ru" || it == "be" || it == "uk" || it == "kk" })
+
+    val tabs = listOf(
+        if (isRu) "Все награды" else "All Badges",
+        strings.tabStreak,
+        strings.tabHours,
+        strings.tabRewards
+    )
 
     val streakDays = uiState.sobrietyTime.days.toFloat()
     val hoursSaved = uiState.sobrietyTime.hoursReclaimed
@@ -120,7 +129,7 @@ fun BadgesScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "DISCIPLINE TROPHY ROOM",
+                            text = strings.badgesScreenTitle,
                             style = MaterialTheme.typography.labelSmall,
                             color = AmberGold,
                             fontWeight = FontWeight.Bold,
@@ -128,14 +137,14 @@ fun BadgesScreen(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "${uiState.unlockedBadges.size} / ${uiState.allBadges.size} Badges Earned",
+                            text = "${uiState.unlockedBadges.size} / ${uiState.allBadges.size} ${strings.totalBadgesUnlocked}",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.ExtraBold,
                             color = TextPrimary
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Each badge represents permanent neurochemical healing and real-world sovereignty.",
+                            text = strings.badgesScreenSubtitle,
                             style = MaterialTheme.typography.bodySmall,
                             color = TextSecondary
                         )
@@ -203,13 +212,13 @@ fun BadgesScreen(
                 ) {
                     Column {
                         Text(
-                            text = "Tangible Real-Life Rewards",
+                            text = strings.personalRewardsTitle,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
                         Text(
-                            text = "Funded by money & time saved from gaming",
+                            text = if (isRu) "Финансируются из сэкономленных на играх денег" else "Funded by money & time saved from gaming",
                             style = MaterialTheme.typography.bodySmall,
                             color = TextMuted
                         )
@@ -229,7 +238,7 @@ fun BadgesScreen(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "New Reward",
+                            text = strings.addCustomRewardButton,
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = SlateDark

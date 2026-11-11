@@ -80,6 +80,10 @@ fun AnalyticsScreen(
     ) {
         item {
             Spacer(modifier = Modifier.height(8.dp))
+            val strings = uiState.strings
+            val isRu = uiState.appLanguage == com.example.ui.i18n.AppLanguage.RUSSIAN ||
+                (uiState.appLanguage == com.example.ui.i18n.AppLanguage.SYSTEM && java.util.Locale.getDefault().language.lowercase().let { it == "ru" || it == "be" || it == "uk" || it == "kk" })
+
             // Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -103,13 +107,13 @@ fun AnalyticsScreen(
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
                     Text(
-                        text = "LIFE RECLAMATION ANALYTICS",
+                        text = strings.analyticsTitle,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
                     Text(
-                        text = "Real mathematical proof of your transformation",
+                        text = strings.analyticsSubtitle,
                         style = MaterialTheme.typography.labelSmall,
                         color = TextSecondary
                     )
@@ -127,6 +131,9 @@ fun AnalyticsScreen(
 
         // 1-Year Long-Term Projection Card
         item {
+            val isRu = uiState.appLanguage == com.example.ui.i18n.AppLanguage.RUSSIAN ||
+                (uiState.appLanguage == com.example.ui.i18n.AppLanguage.SYSTEM && java.util.Locale.getDefault().language.lowercase().let { it == "ru" || it == "be" || it == "uk" || it == "kk" })
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -149,7 +156,7 @@ fun AnalyticsScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "1-YEAR FREEDOM PROJECTION",
+                            text = if (isRu) "ПРОГНОЗ НА 1 ГОД БЕЗ ИГР" else "1-YEAR FREEDOM PROJECTION",
                             style = MaterialTheme.typography.labelSmall,
                             color = EmeraldClean,
                             fontWeight = FontWeight.Bold,
@@ -177,7 +184,7 @@ fun AnalyticsScreen(
                                 .padding(12.dp)
                         ) {
                             Text(
-                                text = "Annual Hours Saved",
+                                text = if (isRu) "Сэкономлено часов" else "Annual Hours Saved",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = TextMuted
                             )
@@ -189,7 +196,7 @@ fun AnalyticsScreen(
                                 color = TextPrimary
                             )
                             Text(
-                                text = "= ${(yearlyHoursReclaimed / 24f).toInt()} full days awake",
+                                text = if (isRu) "= ${(yearlyHoursReclaimed / 24f).toInt()} полных дней бодрствования" else "= ${(yearlyHoursReclaimed / 24f).toInt()} full days awake",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = AmberGold,
                                 fontSize = 11.sp
@@ -204,7 +211,7 @@ fun AnalyticsScreen(
                                 .padding(12.dp)
                         ) {
                             Text(
-                                text = "Annual Money Saved",
+                                text = if (isRu) "Сэкономлено денег" else "Annual Money Saved",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = TextMuted
                             )
@@ -216,7 +223,7 @@ fun AnalyticsScreen(
                                 color = EmeraldClean
                             )
                             Text(
-                                text = "Zero microtransactions",
+                                text = if (isRu) "0 донатов и микроплатежей" else "Zero microtransactions",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextSecondary,
                                 fontSize = 11.sp
@@ -229,6 +236,9 @@ fun AnalyticsScreen(
 
         // Urge Surfing Defense Statistics
         item {
+            val isRu = uiState.appLanguage == com.example.ui.i18n.AppLanguage.RUSSIAN ||
+                (uiState.appLanguage == com.example.ui.i18n.AppLanguage.SYSTEM && java.util.Locale.getDefault().language.lowercase().let { it == "ru" || it == "be" || it == "uk" || it == "kk" })
+
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -254,7 +264,7 @@ fun AnalyticsScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Craving Surfing Log",
+                                text = if (isRu) "Журнал преодоления тяги" else "Craving Surfing Log",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
@@ -262,7 +272,7 @@ fun AnalyticsScreen(
                         }
 
                         Text(
-                            text = "${uiState.cravings.size} Surfed",
+                            text = if (isRu) "${uiState.cravings.size} побед" else "${uiState.cravings.size} Surfed",
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = CyanClarity
@@ -273,7 +283,10 @@ fun AnalyticsScreen(
 
                     if (uiState.cravings.isEmpty()) {
                         Text(
-                            text = "No emergency cravings logged yet. When an urge strikes, use the 'Craving SOS' button on the dashboard to ride it out with box breathing.",
+                            text = if (isRu)
+                                "Записей о преодолении тяги пока нет. Когда возникает позыв к игре, нажмите кнопку «Тяга SOS» на главном экране, чтобы продышать его квадратным дыханием."
+                            else
+                                "No emergency cravings logged yet. When an urge strikes, use the 'Craving SOS' button on the dashboard to ride it out with box breathing.",
                             style = MaterialTheme.typography.bodySmall,
                             color = TextMuted
                         )

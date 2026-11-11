@@ -81,6 +81,10 @@ fun QuestsScreen(
     ) {
         item {
             Spacer(modifier = Modifier.height(8.dp))
+            val strings = uiState.strings
+            val isRu = uiState.appLanguage == com.example.ui.i18n.AppLanguage.RUSSIAN ||
+                (uiState.appLanguage == com.example.ui.i18n.AppLanguage.SYSTEM && java.util.Locale.getDefault().language.lowercase().let { it == "ru" || it == "be" || it == "uk" || it == "kk" })
+
             // Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -109,13 +113,13 @@ fun QuestsScreen(
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {
                         Text(
-                            text = "REAL-LIFE QUESTS",
+                            text = strings.questsScreenTitle,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
                         Text(
-                            text = "Gamify your real habits, not pixels",
+                            text = strings.questsScreenSubtitle,
                             style = MaterialTheme.typography.labelSmall,
                             color = TextSecondary,
                             maxLines = 1,
@@ -140,7 +144,7 @@ fun QuestsScreen(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "New Quest",
+                        text = strings.addCustomQuestButton,
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = SlateDark,
@@ -153,6 +157,7 @@ fun QuestsScreen(
 
         // Manifesto Box
         item {
+            val strings = uiState.strings
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -183,7 +188,7 @@ fun QuestsScreen(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "WHY I QUIT VIDEO GAMES",
+                                text = strings.recoveryManifestoTitle.uppercase(),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = AmberGold,
                                 fontWeight = FontWeight.Bold,
@@ -215,8 +220,10 @@ fun QuestsScreen(
 
         // Section Title
         item {
+            val isRu = uiState.appLanguage == com.example.ui.i18n.AppLanguage.RUSSIAN ||
+                (uiState.appLanguage == com.example.ui.i18n.AppLanguage.SYSTEM && java.util.Locale.getDefault().language.lowercase().let { it == "ru" || it == "be" || it == "uk" || it == "kk" })
             Text(
-                text = "ACTIVE DAILY QUESTS",
+                text = if (isRu) "АКТИВНЫЕ ЕЖЕДНЕВНЫЕ КВЕСТЫ" else "ACTIVE DAILY QUESTS",
                 style = MaterialTheme.typography.labelSmall,
                 color = TextMuted,
                 fontWeight = FontWeight.Bold,

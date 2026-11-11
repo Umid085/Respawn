@@ -66,6 +66,7 @@ fun MoneySavedCard(
     gamesAvoided: Float,
     subscriptionsAvoided: Float,
     onUpdateDailyExpenditure: (Float) -> Unit,
+    strings: com.example.ui.i18n.StringsDefinition = com.example.ui.i18n.AppStrings.Russian,
     modifier: Modifier = Modifier
 ) {
     var showEditDialog by remember { mutableStateOf(false) }
@@ -126,14 +127,14 @@ fun MoneySavedCard(
 
                     Column {
                         Text(
-                            text = "MONEY SAVED",
+                            text = strings.moneySavedTitle,
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = EmeraldClean,
                             letterSpacing = 1.sp
                         )
                         Text(
-                            text = "Zero Games & Subs",
+                            text = strings.moneySavedSubtitle,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary,
@@ -194,7 +195,7 @@ fun MoneySavedCard(
                         modifier = Modifier.testTag("total_money_saved_text")
                     )
                     Text(
-                        text = "Kept in your bank account, not spent on pixels",
+                        text = strings.moneySavedDesc,
                         style = MaterialTheme.typography.bodySmall,
                         color = TextMuted
                     )
@@ -226,13 +227,13 @@ fun MoneySavedCard(
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
                         Text(
-                            text = String.format(java.util.Locale.US, "%.1f Games", gamesAvoided),
+                            text = String.format(java.util.Locale.US, "%.1f %s", gamesAvoided, strings.gamesEquivalentLabel),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
                         Text(
-                            text = "@ $70 / release",
+                            text = strings.gamesRateLabel,
                             style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
                             color = TextMuted
                         )
@@ -257,13 +258,13 @@ fun MoneySavedCard(
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
                         Text(
-                            text = String.format(java.util.Locale.US, "%.1f Months", subscriptionsAvoided),
+                            text = String.format(java.util.Locale.US, "%.1f %s", subscriptionsAvoided, strings.monthsEquivalentLabel),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
                         Text(
-                            text = "@ $15 / sub",
+                            text = strings.monthsRateLabel,
                             style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
                             color = TextMuted
                         )

@@ -149,19 +149,25 @@ fun RespawnApp(viewModel: TrackerViewModel, initialIntent: Intent? = null) {
                 ) {
                     NavDestination.values().forEach { destination ->
                         val selected = currentDestination == destination
+                        val title = when (destination) {
+                            NavDestination.DASHBOARD -> uiState.strings.navDashboard
+                            NavDestination.BADGES -> uiState.strings.navBadges
+                            NavDestination.QUESTS -> uiState.strings.navQuests
+                            NavDestination.ANALYTICS -> uiState.strings.navAnalytics
+                        }
                         NavigationBarItem(
                             selected = selected,
                             onClick = { currentDestination = destination },
                             icon = {
                                 Icon(
                                     imageVector = if (selected) destination.selectedIcon else destination.unselectedIcon,
-                                    contentDescription = destination.title,
+                                    contentDescription = title,
                                     modifier = Modifier.size(22.dp)
                                 )
                             },
                             label = {
                                 Text(
-                                    text = destination.title,
+                                    text = title,
                                     fontSize = 11.sp,
                                     fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
                                 )
@@ -205,7 +211,8 @@ fun RespawnApp(viewModel: TrackerViewModel, initialIntent: Intent? = null) {
                     onSendTestDailyCheckIn = { viewModel.sendTestDailyCheckInNotification() },
                     onSendTestAccomplishment = { viewModel.sendTestAccomplishmentNotification() },
                     onCheckForUpdates = { viewModel.checkForUpdates(silent = false) },
-                    onUpdateTargetGitHubRepo = { viewModel.setTargetGitHubRepo(it) }
+                    onUpdateTargetGitHubRepo = { viewModel.setTargetGitHubRepo(it) },
+                    onSetAppLanguage = { viewModel.setAppLanguage(it) }
                 )
             } else {
                 when (currentDestination) {
@@ -271,6 +278,7 @@ fun RespawnApp(viewModel: TrackerViewModel, initialIntent: Intent? = null) {
     if (showUrgeSurfing) {
         UrgeSurfingDialog(
             whyStatement = uiState.profile.whyStatement,
+            strings = uiState.strings,
             onDismiss = { showUrgeSurfing = false },
             onLogSuccess = { trigger, intensity, strategy, note ->
                 viewModel.logCravingSurfed(trigger, intensity, strategy, note)
@@ -282,6 +290,7 @@ fun RespawnApp(viewModel: TrackerViewModel, initialIntent: Intent? = null) {
     if (showDailyCheckIn) {
         DailyCheckInSheet(
             streakDays = uiState.sobrietyTime.days,
+            strings = uiState.strings,
             onDismiss = { showDailyCheckIn = false },
             onSubmit = { feeling, feelingEmoji, triggers, urge, mood, activities, notes ->
                 viewModel.logDailyCheckIn(

@@ -59,5 +59,9 @@ data class TrackerUiState(
     val isDownloadingUpdate: Boolean = false,
     val updateDownloadProgress: Int = 0,
     val updateCheckStatusMessage: String? = null,
-    val targetGitHubRepo: String = "peersalexandr/respawn"
-)
+    val targetGitHubRepo: String = "peersalexandr/respawn",
+    val appLanguage: com.example.ui.i18n.AppLanguage = com.example.ui.i18n.AppLanguage.RUSSIAN
+) {
+    val strings: com.example.ui.i18n.StringsDefinition
+        get() = com.example.ui.i18n.AppStrings.get(appLanguage)
+}

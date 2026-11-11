@@ -68,6 +68,7 @@ fun StreakHeroCard(
     currentXp: Int,
     onUrgeSurfClick: () -> Unit,
     onCheckInClick: () -> Unit,
+    strings: com.example.ui.i18n.StringsDefinition = com.example.ui.i18n.AppStrings.Russian,
     modifier: Modifier = Modifier
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
@@ -125,13 +126,13 @@ fun StreakHeroCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "Level $currentLevel",
+                        text = "${strings.levelPrefix} $currentLevel",
                         style = MaterialTheme.typography.labelLarge,
                         color = TextPrimary
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "$currentXp XP",
+                        text = "$currentXp ${strings.xpLabel}",
                         style = MaterialTheme.typography.labelSmall,
                         color = AmberGold
                     )
@@ -154,7 +155,7 @@ fun StreakHeroCard(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "CLEAN STREAK",
+                        text = strings.daysFree,
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         color = EmeraldClean,
@@ -216,7 +217,7 @@ fun StreakHeroCard(
                         modifier = Modifier.testTag("streak_days_count")
                     )
                     Text(
-                        text = if (sobrietyTime.days == 1L) "DAY FREE" else "DAYS FREE",
+                        text = strings.daysFree,
                         style = MaterialTheme.typography.labelLarge.copy(
                             letterSpacing = 2.sp,
                             fontWeight = FontWeight.Bold
@@ -274,7 +275,7 @@ fun StreakHeroCard(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "Next: ${nextBadge.title}",
+                                text = "${strings.nextBadgePrefix}${nextBadge.title}",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = TextPrimary,
                                 fontWeight = FontWeight.SemiBold,
@@ -284,7 +285,7 @@ fun StreakHeroCard(
                         }
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = String.format(java.util.Locale.US, "%.1f days left", nextBadgeRemainingDays),
+                            text = String.format(java.util.Locale.US, "%.1f %s", nextBadgeRemainingDays, strings.daysLeftSuffix),
                             style = MaterialTheme.typography.labelSmall,
                             color = AmberGold,
                             maxLines = 1,
@@ -333,7 +334,7 @@ fun StreakHeroCard(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "Craving SOS",
+                        text = strings.cravingSosButton,
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.sp
                     )
@@ -352,7 +353,7 @@ fun StreakHeroCard(
                     )
                 ) {
                     Text(
-                        text = "Daily Check-In",
+                        text = strings.dailyCheckInButton,
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.sp
                     )

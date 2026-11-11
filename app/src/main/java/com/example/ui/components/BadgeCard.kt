@@ -68,6 +68,7 @@ import java.util.Locale
 fun BadgeCard(
     badge: Badge,
     currentValue: Float, // current streak days or hours saved
+    strings: com.example.ui.i18n.StringsDefinition = com.example.ui.i18n.AppStrings.Russian,
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -209,8 +210,9 @@ fun BadgeCard(
                         val formattedDate = badge.unlockedAt?.let {
                             SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(Date(it))
                         } ?: "Awarded"
+                        val isRu = strings == com.example.ui.i18n.AppStrings.Russian
                         Text(
-                            text = "Unlocked $formattedDate",
+                            text = if (isRu) "Разблокировано: $formattedDate" else "Unlocked $formattedDate",
                             style = MaterialTheme.typography.labelSmall,
                             color = EmeraldClean,
                             fontWeight = FontWeight.SemiBold
@@ -227,12 +229,13 @@ fun BadgeCard(
             } else {
                 // Locked progress indicator
                 val progress = (currentValue / badge.requiredThreshold).coerceIn(0f, 1f)
+                val isRu = strings == com.example.ui.i18n.AppStrings.Russian
                 val unitLabel = when (badge.category) {
-                    BadgeCategory.STREAK_DAYS -> "days"
-                    BadgeCategory.HOURS_SAVED -> "hrs"
+                    BadgeCategory.STREAK_DAYS -> if (isRu) "дн." else "days"
+                    BadgeCategory.HOURS_SAVED -> if (isRu) "ч." else "hrs"
                     BadgeCategory.MONEY_SAVED -> "$"
-                    BadgeCategory.CRAVING_SURF -> "urges"
-                    BadgeCategory.QUESTS -> "quests"
+                    BadgeCategory.CRAVING_SURF -> if (isRu) "побед" else "urges"
+                    BadgeCategory.QUESTS -> if (isRu) "квестов" else "quests"
                 }
 
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -241,7 +244,7 @@ fun BadgeCard(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Requirement: ${badge.requiredThreshold.toInt()} $unitLabel",
+                            text = "${strings.requiredLabel}: ${badge.requiredThreshold.toInt()} $unitLabel",
                             style = MaterialTheme.typography.labelSmall,
                             color = TextMuted
                         )
@@ -266,6 +269,7 @@ fun BadgeCard(
 
             // Expanded Scientific Benefit & Psychology
             AnimatedVisibility(visible = expanded) {
+                val isRu = strings == com.example.ui.i18n.AppStrings.Russian
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -275,7 +279,7 @@ fun BadgeCard(
                         .padding(12.dp)
                 ) {
                     Text(
-                        text = "🧠 Neurological Impact & Lore",
+                        text = if (isRu) "🧠 Нейробиологический эффект" else "🧠 Neurological Impact & Lore",
                         style = MaterialTheme.typography.labelMedium,
                         color = CyanClarity,
                         fontWeight = FontWeight.SemiBold

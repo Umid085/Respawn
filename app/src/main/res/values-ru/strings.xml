@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Respawn</string>
+    <string name="channel_daily_checkin_name">Ежедневный дневник трезвости</string>
+    <string name="channel_daily_checkin_desc">Вечерние напоминания для записи эмоционального состояния и преодоления тяги</string>
+    <string name="channel_accomplishments_name">Достижения и вехи</string>
+    <string name="channel_accomplishments_desc">Оповещения при разблокировке новых трофеев и дней трезвости</string>
+</resources>

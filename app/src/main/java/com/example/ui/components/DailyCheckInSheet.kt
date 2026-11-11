@@ -80,10 +80,22 @@ fun DailyCheckInSheet(
         mood: Int,
         activities: List<String>,
         notes: String
-    ) -> Unit
+    ) -> Unit,
+    strings: com.example.ui.i18n.StringsDefinition = com.example.ui.i18n.AppStrings.Russian
 ) {
+    val isRu = strings == com.example.ui.i18n.AppStrings.Russian
+
     // Feelings state
-    val feelingOptions = listOf(
+    val feelingOptions = if (isRu) listOf(
+        Pair("Спокойно", "🧘"),
+        Pair("Беспокойство", "🥱"),
+        Pair("Энергично", "⚡"),
+        Pair("Стресс / Тревога", "😫"),
+        Pair("Искушение к играм", "⚠️"),
+        Pair("Одиночество", "👤"),
+        Pair("Сфокусирован", "🎯"),
+        Pair("Благодарность", "🌿")
+    ) else listOf(
         Pair("Calm & Grounded", "🧘"),
         Pair("Restless & Bored", "🥱"),
         Pair("Energized & Sharp", "⚡"),
@@ -95,8 +107,19 @@ fun DailyCheckInSheet(
     )
     var selectedFeeling by remember { mutableStateOf(feelingOptions[0]) }
 
+    val noTriggersLabel = if (isRu) "Без триггеров (был тверд) ✓" else "No Triggers (Felt Strong) ✓"
+
     // Triggers identified state
-    val triggerOptions = listOf(
+    val triggerOptions = if (isRu) listOf(
+        "Скука / Свободное время",
+        "Усталость поздно вечером",
+        "Стресс на работе/учебе",
+        "Увидел стрим / игру друзей",
+        "Эмоциональный побег от проблем",
+        "Одиночество",
+        "Раздражение / Плохое настроение",
+        noTriggersLabel
+    ) else listOf(
         "Unstructured Free Time / Boredom",
         "Late Night Fatigue",
         "Work or Study Stress",
@@ -104,16 +127,23 @@ fun DailyCheckInSheet(
         "Emotional Escapism (Avoiding Pain)",
         "Social Isolation",
         "Frustration / Bad Mood",
-        "No Triggers (Felt Strong) ✓"
+        noTriggersLabel
     )
-    val selectedTriggers = remember { mutableStateListOf<String>("No Triggers (Felt Strong) ✓") }
+    val selectedTriggers = remember { mutableStateListOf<String>(noTriggersLabel) }
 
     var urgeLevel by remember { mutableIntStateOf(1) }
     var moodLevel by remember { mutableIntStateOf(4) }
-    val selectedActivities = remember { mutableStateListOf<String>("Walk / Outdoors") }
-    var notes by remember { mutableStateOf("") }
 
-    val activityOptions = listOf(
+    val activityOptions = if (isRu) listOf(
+        "Тренировка и зал",
+        "Чтение книги",
+        "Глубокая работа / Учеба",
+        "Прогулка на улице",
+        "Приготовление еды",
+        "Общение с друзьями",
+        "Творческое хобби",
+        "Медитация"
+    ) else listOf(
         "Exercise & Gym",
         "Reading Book",
         "Deep Work & Career",
@@ -123,6 +153,9 @@ fun DailyCheckInSheet(
         "Creative Hobby",
         "Meditation"
     )
+
+    val selectedActivities = remember { mutableStateListOf<String>(activityOptions[3]) }
+    var notes by remember { mutableStateOf("") }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -169,14 +202,14 @@ fun DailyCheckInSheet(
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
                             Text(
-                                text = "DAILY SOBRIETY JOURNAL",
+                                text = strings.checkInModalTitle,
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = EmeraldClean,
                                 letterSpacing = 1.sp
                             )
                             Text(
-                                text = "Day $streakDays of Sobriety",
+                                text = String.format(strings.checkInDayNumberPrefix, streakDays),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
@@ -213,7 +246,7 @@ fun DailyCheckInSheet(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "1. How are you feeling today?",
+                            text = "1. ${strings.howFeelingQuestion}",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -273,14 +306,14 @@ fun DailyCheckInSheet(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "2. Identify Triggers Encountered",
+                            text = "2. ${strings.triggersQuestion}",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
                     }
                     Text(
-                        text = "Naming triggers robs them of their subconscious power.",
+                        text = if (isRu) "Осознание триггеров лишает их подсознательной силы." else "Naming triggers robs them of their subconscious power.",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextMuted,
                         fontSize = 11.sp
@@ -295,7 +328,7 @@ fun DailyCheckInSheet(
                     ) {
                         triggerOptions.forEach { trigger ->
                             val isSelected = selectedTriggers.contains(trigger)
-                            val isNone = trigger.startsWith("No Triggers")
+                            val isNone = trigger == noTriggersLabel
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(10.dp))
@@ -317,11 +350,11 @@ fun DailyCheckInSheet(
                                             selectedTriggers.clear()
                                             selectedTriggers.add(trigger)
                                         } else {
-                                            selectedTriggers.remove("No Triggers (Felt Strong) ✓")
+                                            selectedTriggers.remove(noTriggersLabel)
                                             if (isSelected) {
                                                 selectedTriggers.remove(trigger)
                                                 if (selectedTriggers.isEmpty()) {
-                                                    selectedTriggers.add("No Triggers (Felt Strong) ✓")
+                                                    selectedTriggers.add(noTriggersLabel)
                                                 }
                                             } else {
                                                 selectedTriggers.add(trigger)
@@ -350,17 +383,17 @@ fun DailyCheckInSheet(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "3. Gaming Craving Intensity",
+                            text = String.format(strings.cravingIntensityLabel, urgeLevel),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
                         val urgeLabel = when (urgeLevel) {
-                            1 -> "Zero Cravings 🟢"
-                            2 -> "Mild Fleeting 🟢"
-                            3 -> "Noticeable 🟡"
-                            4 -> "Challenging 🟠"
-                            else -> "Severe Wave 🔴"
+                            1 -> if (isRu) "Нет тяги 🟢" else "Zero Cravings 🟢"
+                            2 -> if (isRu) "Мимолетная 🟢" else "Mild Fleeting 🟢"
+                            3 -> if (isRu) "Заметная 🟡" else "Noticeable 🟡"
+                            4 -> if (isRu) "Сложная 🟠" else "Challenging 🟠"
+                            else -> if (isRu) "Сильная волна 🔴" else "Severe Wave 🔴"
                         }
                         Text(
                             text = urgeLabel,
@@ -396,7 +429,7 @@ fun DailyCheckInSheet(
                 // 4. POSITIVE ACTIVITIES TODAY
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "4. Replacement Activities Done",
+                        text = "4. ${strings.productiveActivitiesQuestion}",
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
@@ -448,14 +481,14 @@ fun DailyCheckInSheet(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "5. Daily Journal Reflection",
+                            text = "5. ${strings.journalNotesLabel}",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
                     }
                     Text(
-                        text = "How did your mind respond today? What triggered you, or what victories did you achieve?",
+                        text = strings.journalNotesPlaceholder,
                         style = MaterialTheme.typography.bodySmall,
                         color = TextMuted,
                         fontSize = 11.sp
@@ -466,7 +499,7 @@ fun DailyCheckInSheet(
                     OutlinedTextField(
                         value = notes,
                         onValueChange = { notes = it },
-                        placeholder = { Text("Today I felt tempted around 8 PM due to boredom, but I went for a run instead. Felt much clearer afterwards...") },
+                        placeholder = { Text(if (isRu) "Сегодня возникла тяга около 20:00 из-за скуки, но вместо игры я пошел на пробежку. Голова прояснилась..." else "Today I felt tempted around 8 PM due to boredom, but I went for a run instead. Felt much clearer afterwards...") },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -507,7 +540,7 @@ fun DailyCheckInSheet(
                 colors = ButtonDefaults.buttonColors(containerColor = EmeraldClean)
             ) {
                 Text(
-                    text = "Save Journal Entry (+60 XP)",
+                    text = strings.saveJournalButton,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = SlateCard
