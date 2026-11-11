@@ -83,4 +83,12 @@ class ExampleUnitTest {
     assertEquals(56.0f, totalHoursReclaimed, 0.01f)
     assertTrue("Should be equivalent to over 9 books read", booksEquivalent > 9.0f)
   }
+
+  @Test
+  fun testNotificationChannelsAndActions() {
+    assertEquals("channel_daily_checkin", com.example.notification.NotificationHelper.CHANNEL_DAILY_CHECKIN)
+    assertEquals("channel_accomplishments", com.example.notification.NotificationHelper.CHANNEL_ACCOMPLISHMENTS)
+    assertEquals("com.aistudio.respawn.ACTION_OPEN_CHECKIN", com.example.notification.NotificationHelper.ACTION_OPEN_CHECKIN)
+    assertEquals("com.aistudio.respawn.ACTION_OPEN_BADGES", com.example.notification.NotificationHelper.ACTION_OPEN_BADGES)
+  }
 }

@@ -22,13 +22,16 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.SportsEsports
+import androidx.compose.material.icons.filled.SystemUpdate
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +40,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -75,6 +80,12 @@ fun SettingsScreen(
     onUpdateQuitTimestamp: (Long) -> Unit,
     onResetStreak: (String) -> Unit,
     onUpdateProfile: (hoursPerDay: Float, dailySpend: Float, monthlySpend: Float, why: String, genre: String) -> Unit,
+    onToggleDailyCheckInNotification: (Boolean) -> Unit = {},
+    onToggleAccomplishmentsNotification: (Boolean) -> Unit = {},
+    onSendTestDailyCheckIn: () -> Unit = {},
+    onSendTestAccomplishment: () -> Unit = {},
+    onCheckForUpdates: () -> Unit = {},
+    onUpdateTargetGitHubRepo: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var hoursPerDay by remember(uiState.profile.hoursPerDayGaming) {
@@ -331,6 +342,322 @@ fun SettingsScreen(
                             focusedBorderColor = AmberGold,
                             unfocusedBorderColor = SlateBorder
                         )
+                    )
+                }
+            }
+        }
+
+        // Notifications & Reminders Card
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("notifications_settings_card"),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = SlateCard),
+                border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldClean.copy(alpha = 0.5f))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(EmeraldClean.copy(alpha = 0.15f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.NotificationsActive,
+                                contentDescription = "Notifications",
+                                tint = EmeraldClean,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = "NOTIFICATIONS & REMINDERS",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = EmeraldClean,
+                                letterSpacing = 1.sp
+                            )
+                            Text(
+                                text = "Daily Check-Ins & Accomplishments",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = TextPrimary
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // 1. Daily Check-in reminder toggle
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(SlateCardElevated)
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Daily Check-In Reminder (8:00 PM)",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = TextPrimary
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "Evening prompt to log emotional state, cravings, and identify triggers.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = TextMuted,
+                                lineHeight = 14.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Switch(
+                            checked = uiState.dailyCheckInNotificationEnabled,
+                            onCheckedChange = { onToggleDailyCheckInNotification(it) },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = EmeraldClean,
+                                checkedTrackColor = EmeraldClean.copy(alpha = 0.3f),
+                                uncheckedThumbColor = TextMuted,
+                                uncheckedTrackColor = SlateBorder
+                            ),
+                            modifier = Modifier.testTag("toggle_daily_checkin_notification")
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // 2. Accomplishments & Milestones toggle
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(SlateCardElevated)
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Milestones & Accomplishments",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = TextPrimary
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "Celebration alerts when unlocking 7-day, 30-day, or 100-day clean streak badges.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = TextMuted,
+                                lineHeight = 14.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Switch(
+                            checked = uiState.accomplishmentsNotificationEnabled,
+                            onCheckedChange = { onToggleAccomplishmentsNotification(it) },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = AmberGold,
+                                checkedTrackColor = AmberGold.copy(alpha = 0.3f),
+                                uncheckedThumbColor = TextMuted,
+                                uncheckedTrackColor = SlateBorder
+                            ),
+                            modifier = Modifier.testTag("toggle_accomplishments_notification")
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    // Test Buttons Row
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = onSendTestDailyCheckIn,
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = EmeraldClean)
+                        ) {
+                            Text("Test Check-In", fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                        }
+
+                        OutlinedButton(
+                            onClick = onSendTestAccomplishment,
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = AmberGold)
+                        ) {
+                            Text("Test Trophy", fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                        }
+                    }
+                }
+            }
+        }
+
+        // In-App Updates & Auto-Renewal Card
+        item {
+            var repoInput by remember(uiState.targetGitHubRepo) { mutableStateOf(uiState.targetGitHubRepo) }
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("app_updates_card"),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = SlateCard),
+                border = androidx.compose.foundation.BorderStroke(1.dp, AmberGold.copy(alpha = 0.5f))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(AmberGold.copy(alpha = 0.15f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.SystemUpdate,
+                                contentDescription = "App Updates",
+                                tint = AmberGold,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = "APP UPDATES & AUTO-RENEWAL",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = AmberGold,
+                                letterSpacing = 1.sp
+                            )
+                            Text(
+                                text = "In-App Version Checker",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = TextPrimary
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(SlateCardElevated)
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "Installed Version",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TextMuted
+                            )
+                            Text(
+                                text = "v1.0 (Build 1)",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = EmeraldClean
+                            )
+                        }
+
+                        Button(
+                            onClick = onCheckForUpdates,
+                            enabled = !uiState.isCheckingForUpdate,
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = AmberGold)
+                        ) {
+                            if (uiState.isCheckingForUpdate) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(14.dp),
+                                    strokeWidth = 2.dp,
+                                    color = SlateDark
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Checking...", color = SlateDark, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            } else {
+                                Text("Check for Updates", color = SlateDark, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+
+                    if (uiState.updateCheckStatusMessage != null) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(SlateCardElevated)
+                                .border(1.dp, SlateBorder, RoundedCornerShape(10.dp))
+                                .padding(10.dp)
+                        ) {
+                            Text(
+                                text = uiState.updateCheckStatusMessage ?: "",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = if (uiState.availableUpdate != null) EmeraldClean else TextSecondary
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = "GitHub Release Repository:",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TextMuted
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    OutlinedTextField(
+                        value = repoInput,
+                        onValueChange = {
+                            repoInput = it
+                            onUpdateTargetGitHubRepo(it)
+                        },
+                        placeholder = { Text("owner/repository") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = SlateCardElevated,
+                            unfocusedContainerColor = SlateCardElevated,
+                            focusedBorderColor = AmberGold,
+                            unfocusedBorderColor = SlateBorder
+                        ),
+                        singleLine = true
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "When you publish a new APK release on GitHub, the app detects it automatically and prompts you to update in one tap.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextMuted,
+                        fontSize = 11.sp,
+                        lineHeight = 15.sp
                     )
                 }
             }

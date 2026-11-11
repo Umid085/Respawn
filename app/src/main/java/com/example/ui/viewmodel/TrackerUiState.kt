@@ -51,5 +51,13 @@ data class TrackerUiState(
     val cravings: List<CravingEvent> = emptyList(),
     val quests: List<QuestItem> = emptyList(),
     val rewards: List<PersonalReward> = emptyList(),
-    val newlyUnlockedBadge: Badge? = null // For pop-up celebration
+    val newlyUnlockedBadge: Badge? = null, // For pop-up celebration
+    val dailyCheckInNotificationEnabled: Boolean = true,
+    val accomplishmentsNotificationEnabled: Boolean = true,
+    val availableUpdate: com.example.updater.AppReleaseInfo? = null,
+    val isCheckingForUpdate: Boolean = false,
+    val isDownloadingUpdate: Boolean = false,
+    val updateDownloadProgress: Int = 0,
+    val updateCheckStatusMessage: String? = null,
+    val targetGitHubRepo: String = "peersalexandr/respawn"
 )

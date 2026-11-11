@@ -1,10 +1,15 @@
 package com.example
 
+import android.Manifest
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -32,6 +37,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +52,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.notification.NotificationHelper
+import com.example.ui.components.AppUpdateDialog
 import com.example.ui.components.BadgeUnlockDialog
 import com.example.ui.components.DailyCheckInSheet
 import com.example.ui.components.UrgeSurfingDialog
@@ -76,20 +84,26 @@ enum class NavDestination(
 }
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             RespawnTheme {
                 val viewModel: TrackerViewModel = viewModel()
-                RespawnApp(viewModel = viewModel)
+                RespawnApp(viewModel = viewModel, initialIntent = intent)
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
     }
 }
 
 @Composable
-fun RespawnApp(viewModel: TrackerViewModel) {
+fun RespawnApp(viewModel: TrackerViewModel, initialIntent: Intent? = null) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     var currentDestination by remember { mutableStateOf(NavDestination.DASHBOARD) }
@@ -97,6 +111,21 @@ fun RespawnApp(viewModel: TrackerViewModel) {
 
     var showUrgeSurfing by remember { mutableStateOf(false) }
     var showDailyCheckIn by remember { mutableStateOf(false) }
+
+    // Android 13+ Notification Runtime Permission Launcher
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { _ -> }
+
+    LaunchedEffect(Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+        when (initialIntent?.action) {
+            NotificationHelper.ACTION_OPEN_CHECKIN -> showDailyCheckIn = true
+            NotificationHelper.ACTION_OPEN_BADGES -> currentDestination = NavDestination.BADGES
+        }
+    }
 
     if (inSettings) {
         BackHandler { inSettings = false }
@@ -170,7 +199,13 @@ fun RespawnApp(viewModel: TrackerViewModel) {
                     onResetStreak = { viewModel.resetStreak(it) },
                     onUpdateProfile = { hours, dailySpend, monthlySpend, why, genre ->
                         viewModel.updateProfileSettings(hours, dailySpend, monthlySpend, why, genre)
-                    }
+                    },
+                    onToggleDailyCheckInNotification = { viewModel.setDailyCheckInNotification(it) },
+                    onToggleAccomplishmentsNotification = { viewModel.setAccomplishmentsNotification(it) },
+                    onSendTestDailyCheckIn = { viewModel.sendTestDailyCheckInNotification() },
+                    onSendTestAccomplishment = { viewModel.sendTestAccomplishmentNotification() },
+                    onCheckForUpdates = { viewModel.checkForUpdates(silent = false) },
+                    onUpdateTargetGitHubRepo = { viewModel.setTargetGitHubRepo(it) }
                 )
             } else {
                 when (currentDestination) {
@@ -259,6 +294,18 @@ fun RespawnApp(viewModel: TrackerViewModel) {
                     notes = notes
                 )
             }
+        )
+    }
+
+    // In-App Version Update Dialog
+    uiState.availableUpdate?.let { updateInfo ->
+        val context = androidx.compose.ui.platform.LocalContext.current
+        AppUpdateDialog(
+            releaseInfo = updateInfo,
+            isDownloading = uiState.isDownloadingUpdate,
+            downloadProgress = uiState.updateDownloadProgress,
+            onDismiss = { viewModel.dismissUpdateDialog() },
+            onStartUpdate = { viewModel.downloadAndInstallUpdate(context) }
         )
     }
 }

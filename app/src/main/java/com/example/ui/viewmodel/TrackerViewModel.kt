@@ -7,8 +7,11 @@ import com.example.data.database.AppDatabase
 import com.example.data.model.Badge
 import com.example.data.model.BadgeCategory
 import com.example.data.model.QuestItem
+import android.content.Context
 import com.example.data.model.UserProfile
 import com.example.data.repository.TrackerRepository
+import com.example.notification.NotificationHelper
+import com.example.updater.AppUpdateManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,8 +32,24 @@ class TrackerViewModel(application: Application) : AndroidViewModel(application)
         val database = AppDatabase.getInstance(application)
         repository = TrackerRepository(database)
 
+        NotificationHelper.createNotificationChannels(application)
+        val dailyEnabled = NotificationHelper.isDailyCheckInEnabled(application)
+        val accomEnabled = NotificationHelper.isAccomplishmentsEnabled(application)
+        val repo = AppUpdateManager.getTargetRepository(application)
+        _uiState.update {
+            it.copy(
+                dailyCheckInNotificationEnabled = dailyEnabled,
+                accomplishmentsNotificationEnabled = accomEnabled,
+                targetGitHubRepo = repo
+            )
+        }
+        if (dailyEnabled) {
+            NotificationHelper.scheduleDailyReminder(application)
+        }
+
         viewModelScope.launch {
             repository.initializeIfNeeded()
+            checkForUpdates(silent = true)
         }
 
         // Collect repository flows
@@ -94,10 +113,15 @@ class TrackerViewModel(application: Application) : AndroidViewModel(application)
             }
         }
 
-        // Collect newly unlocked badge events for celebration modal
+        // Collect newly unlocked badge events for celebration modal & notification
         viewModelScope.launch {
             repository.badgeUnlockedEvent.collect { badge ->
                 _uiState.update { it.copy(newlyUnlockedBadge = badge) }
+                NotificationHelper.showAccomplishmentNotification(
+                    context = getApplication(),
+                    badgeTitle = badge.title,
+                    badgeDescription = badge.description
+                )
             }
         }
 
@@ -330,6 +354,84 @@ class TrackerViewModel(application: Application) : AndroidViewModel(application)
             )
             repository.updateUserProfile(updated)
         }
+    }
+
+    fun setDailyCheckInNotification(enabled: Boolean) {
+        NotificationHelper.setDailyCheckInEnabled(getApplication(), enabled)
+        _uiState.update { it.copy(dailyCheckInNotificationEnabled = enabled) }
+    }
+
+    fun setAccomplishmentsNotification(enabled: Boolean) {
+        NotificationHelper.setAccomplishmentsEnabled(getApplication(), enabled)
+        _uiState.update { it.copy(accomplishmentsNotificationEnabled = enabled) }
+    }
+
+    fun sendTestDailyCheckInNotification() {
+        val days = _uiState.value.sobrietyTime.days.coerceAtLeast(1L)
+        NotificationHelper.showDailyCheckInNotification(getApplication(), days)
+    }
+
+    fun sendTestAccomplishmentNotification() {
+        val featured = _uiState.value.allBadges.firstOrNull { it.id == "badge_7d" }
+            ?: _uiState.value.allBadges.firstOrNull()
+        val title = featured?.title ?: "First Week Clean"
+        val desc = featured?.description ?: "7 days gaming-free! Real neurotransmitter reset underway."
+        NotificationHelper.showAccomplishmentNotification(getApplication(), title, desc)
+    }
+
+    fun checkForUpdates(silent: Boolean = false) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isCheckingForUpdate = true, updateCheckStatusMessage = null) }
+            val result = AppUpdateManager.checkForUpdates(getApplication(), currentVersionCode = 1)
+            result.onSuccess { releaseInfo ->
+                _uiState.update {
+                    it.copy(
+                        isCheckingForUpdate = false,
+                        availableUpdate = if (releaseInfo.hasUpdate) releaseInfo else null,
+                        updateCheckStatusMessage = if (releaseInfo.hasUpdate) {
+                            "Update available: ${releaseInfo.latestVersionName}"
+                        } else {
+                            if (!silent) "You're on the newest version (v1.0)." else null
+                        }
+                    )
+                }
+            }.onFailure { error ->
+                _uiState.update {
+                    it.copy(
+                        isCheckingForUpdate = false,
+                        updateCheckStatusMessage = if (!silent) "Could not check updates: ${error.localizedMessage ?: "Network error"}" else null
+                    )
+                }
+            }
+        }
+    }
+
+    fun downloadAndInstallUpdate(context: Context) {
+        val update = _uiState.value.availableUpdate ?: return
+        viewModelScope.launch {
+            _uiState.update { it.copy(isDownloadingUpdate = true, updateDownloadProgress = 0) }
+            val downloadResult = AppUpdateManager.downloadApk(context, update.downloadUrl) { progress ->
+                _uiState.update { it.copy(updateDownloadProgress = progress) }
+            }
+            _uiState.update { it.copy(isDownloadingUpdate = false) }
+            downloadResult.onSuccess { apkFile ->
+                val installed = AppUpdateManager.installApk(context, apkFile)
+                if (installed) {
+                    _uiState.update { it.copy(availableUpdate = null) }
+                }
+            }.onFailure { error ->
+                _uiState.update { it.copy(updateCheckStatusMessage = "Download failed: ${error.localizedMessage}") }
+            }
+        }
+    }
+
+    fun dismissUpdateDialog() {
+        _uiState.update { it.copy(availableUpdate = null) }
+    }
+
+    fun setTargetGitHubRepo(repo: String) {
+        AppUpdateManager.setTargetRepository(getApplication(), repo)
+        _uiState.update { it.copy(targetGitHubRepo = repo) }
     }
 }
 
